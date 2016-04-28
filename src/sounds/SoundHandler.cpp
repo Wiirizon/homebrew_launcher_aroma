@@ -172,11 +172,11 @@ SoundDecoder * SoundHandler::GetSoundDecoder(const char * filepath)
 	}
 	else if(magic == 0x52494646) // 'RIFF'
 	{
-		//return new WavDecoder(filepath);
+		return new WavDecoder(filepath);
 	}
 	else if(CheckMP3Signature((u8 *) &magic) == true)
 	{
-		//return new Mp3Decoder(filepath);
+		return new Mp3Decoder(filepath);
 	}
 
 	return new SoundDecoder(filepath);
@@ -204,11 +204,11 @@ SoundDecoder * SoundHandler::GetSoundDecoder(const u8 * sound, int length)
 	}
 	else if(magic[0] == 0x52494646) // 'RIFF'
 	{
-		//return new WavDecoder(sound, length);
+		return new WavDecoder(sound, length);
 	}
 	else if(CheckMP3Signature(check) == true)
 	{
-		//return new Mp3Decoder(sound, length);
+		return new Mp3Decoder(sound, length);
 	}
 
 	return new SoundDecoder(sound, length);
@@ -217,15 +217,18 @@ SoundDecoder * SoundHandler::GetSoundDecoder(const u8 * sound, int length)
 void SoundHandler::executeThread()
 {
     // v2 sound lib can not properly end transition audio on old firmwares
-    if (OS_FIRMWARE <= 410)
+    if (OS_FIRMWARE >= 400 && OS_FIRMWARE <= 410)
     {
         ProperlyEndTransitionAudio();
     }
-    
+
     //! initialize 48 kHz renderer
     u32 params[3] = { 1, 0, 0 };
-    AXInitWithParams(params);
 
+    if(AXInitWithParams != 0)
+        AXInitWithParams(params);
+    else
+        AXInit();
 
     // The problem with last voice on 500 was caused by it having priority 0
     // We would need to change this priority distribution if for some reason
