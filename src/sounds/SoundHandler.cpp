@@ -36,7 +36,7 @@
 SoundHandler * SoundHandler::handlerInstance = NULL;
 
 SoundHandler::SoundHandler()
-    : CThread(CThread::eAttributeAffCore1 | CThread::eAttributePinnedAff, 0, 0x8000)
+    : CThread(CThread::eAttributeAffCore0 | CThread::eAttributePinnedAff, 0, 0x8000)
 {
 	Decoding = false;
 	ExitRequested = false;
