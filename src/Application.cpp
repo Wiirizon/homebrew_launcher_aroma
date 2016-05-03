@@ -28,7 +28,7 @@ Application *Application::applicationInstance = NULL;
 bool Application::exitApplication = false;
 
 Application::Application()
-	: CThread(CThread::eAttributeAffCore0 | CThread::eAttributePinnedAff, 0, 0x20000)
+	: CThread(CThread::eAttributeAffCore1 | CThread::eAttributePinnedAff, 0, 0x20000)
 	, bgMusic(NULL)
 	, video(NULL)
     , mainWindow(NULL)
