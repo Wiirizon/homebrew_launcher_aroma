@@ -1,14 +1,14 @@
-# The Homebrew Launcher U
+# WiiU Homebrew Launcher
 
 This is a WiiU homebrew how permit listing homebrew application and run them (like the Homebrew Channel of the Wii, by Team Twiizer).
 
 #### Usage
 
-To use the Homebrew Launcher U (or HBLU, for short) you must copy homebrew_launcher.elf into SD:/wiiu/apps/homebrew_launcher/homebrew_launcher.elf, and run the installer throught your WiiU browser.
+To use the Homebrew Launcher (or HBL, for short) you must copy homebrew_launcher.elf into SD:/wiiu/apps/homebrew_launcher/homebrew_launcher.elf, and run the installer throught your WiiU browser.
 
-Every apps who will be listed are in a directory named wiiu/apps/homebrew_name/homebrew_name.elf. Here is an example:
+The apps that will be listed are should be in the following path /wiiu/apps/homebrew_name/some_elf_name.elf on the root of the SD card. A meta.xml and an icon.png (256x96) are optional. Here is an example:
 
-- sdmc:/
+- sd:/
   - wiiu/
     - apps/
      - homebrew_launcher/
@@ -28,9 +28,21 @@ Every apps who will be listed are in a directory named wiiu/apps/homebrew_name/h
        - meta.xml
        - icon.png
 
-#### ELF and XML
+#### Building the homebrew launcher
 
-ELF (executable and linkable format) can be linked using [dekitPPC](http://devkitpro.org/wiki/Getting_Started).
+To build the main application devkitPPC is required as well as some additionally libraries. If not yet done export the path of devkitPPC and devkitPro to the evironment variables DEVKITPRO and DEVKITPPC. Additionally you will need to include the [libogc](https://github.com/dimok789/homebrew_launcher/releases/download/v1.0/libogc.7z) and [portlibs](https://github.com/dimok789/homebrew_launcher/releases/download/v1.0/portlibs.7z) packages in your devkitPro path.
+
+
+All remaining is to enter the main application path and enter "make". You should get a homebrew_launcher.elf and a homebrew__launcher_dbg.elf in the main path.
+
+To compile the installer application enter the "installer" path on the source code and type "make".
+
+#### Building an application / homebrew (ELF) for the homebrew launcher 
+For an example on how to build an application for the HBL check out the [Hello World example](https://github.com/dimok789/hello_world) application or the port of the libwiiu application [Pong](https://github.com/dimok789/pong_port) for HBL.
+
+#### Meta XML
+
+The meta.xml is optional and can be put in the same path as the homebrew ELF file to display additional information about the homebrew.
 
 Here is a XML example:
 
@@ -44,8 +56,6 @@ Here is a XML example:
     <long_description>long description</long_description> 
     </app>
 
-#### Building
+#### Icon PNG
+The icon.png has to be of the resolution 256 x 96 and can be placed in the same path as the homebrew ELF file. This file is optional and shows an icon for the homebrew inside the homebrew launcher.
 
-To build the main application devkitPPC is required as well as some additionally libraries. If not yet done export the path of devkitPPC and devkitPRO to the evironment variables DEVKITPRO and DEVKITPPC. All remaining is to enter the main application path and enter "make". You should get a homebrew_launcher.elf and a homebrew__launcher_dbg.elf in the main path.
-
-To compile the installer application enter the "installer" path on the source code and type "make".
