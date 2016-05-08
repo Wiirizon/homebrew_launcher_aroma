@@ -1,6 +1,6 @@
 # WiiU Homebrew Launcher
 
-This is a WiiU homebrew how permit listing homebrew application and run them (like the Homebrew Channel of the Wii, by Team Twiizer).
+The Homebrew Launcher is a WiiU homebrew that lists homebrew applications located on a SD card and permits launching them (similar to the Homebrew Channel of the Wii).
 
 #### Usage
 
@@ -28,7 +28,7 @@ The apps that will be listed are should be in the following path /wiiu/apps/home
        - meta.xml
        - icon.png
 
-#### Building the homebrew launcher
+#### Building the Homebrew Launcher
 
 To build the main application devkitPPC is required as well as some additionally libraries. If not yet done export the path of devkitPPC and devkitPro to the evironment variables DEVKITPRO and DEVKITPPC. Additionally you will need to include the [libogc](https://github.com/dimok789/homebrew_launcher/releases/download/v1.0/libogc.7z) and [portlibs](https://github.com/dimok789/homebrew_launcher/releases/download/v1.0/portlibs.7z) packages in your devkitPro path.
 
@@ -37,7 +37,7 @@ All remaining is to enter the main application path and enter "make". You should
 
 To compile the installer application enter the "installer" path on the source code and type "make".
 
-#### Building an application / homebrew (ELF) for the homebrew launcher 
+#### Building an application / homebrew (ELF) for the Homebrew Launcher 
 For an example on how to build an application for the HBL check out the [Hello World example](https://github.com/dimok789/hello_world) application or the port of the libwiiu application [Pong](https://github.com/dimok789/pong_port) for HBL.
 
 #### Meta XML
