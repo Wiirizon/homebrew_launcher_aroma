@@ -69,6 +69,7 @@ main: sd_loader.h
 clean:
 	rm -rf $(build)
 	rm -rf sd_loader.h
+	make clean -C ../sd_loader
 
 print_stats:
 	@echo

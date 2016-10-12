@@ -136,8 +136,31 @@ for($i=0; $i<0x2000; $i+=4)//Old stuff, probably should be removed(testing is re
 	$con.= pack("N*", 0x8495a6b4);
 }
 
+header('HTTP/1.0 200 OK');
 header("Content-Type: video/mp4");
+header('Accept-Ranges: bytes');
+header('Content-Length: '.strlen($con));
+header("Content-Transfer-Encoding: binary\n");
+header('Connection: close');
 
-echo $con;
+// thanks to http://loadiine.ovh for finding this out
+// At this exact moment, WiiU is loading its video player according to "Content-Type: video/mp4"
+// When loaded too quickly, the video player can still freeze. So let's leave him 1 second to pop-up
+sleep(1);
+
+//echo $con;
+
+
+do
+{
+	$sub = substr($con, 0, 1024*16);
+	$con = substr($con, 1024*16);
+	
+	echo $sub;
+	usleep(1000);
+	$len = strlen($con);
+}
+while($len > 0);
+
 
 ?>

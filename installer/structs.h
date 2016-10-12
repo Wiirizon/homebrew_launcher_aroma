@@ -19,7 +19,7 @@ typedef struct {
     void  (*MEMFreeToDefaultHeap)(void *ptr);
     void  (*DCFlushRange)(const void *addr, unsigned int length);
     void  (*ICInvalidateRange)(const void *addr, unsigned int length);
-    void  (*_Exit)(void);
+    void  (*_Exit)(int);
 
     void* (*curl_easy_init)(void);
     void  (*curl_easy_setopt)(void *handle, unsigned int param, const void *op);

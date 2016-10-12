@@ -111,14 +111,14 @@ void __main(void)
 
     /* Get our memory functions */
     unsigned int* functionPointer;
-    void* (*memset)(void * dest, unsigned int value, unsigned int bytes);
-    OSDynLoad_FindExport(coreinit_handle, 0, "memset", &memset);
+    void* (*p_memset)(void * dest, unsigned int value, unsigned int bytes);
+    OSDynLoad_FindExport(coreinit_handle, 0, "memset", &p_memset);
 
     private_data_t private_data;
-    memset(&private_data, 0, sizeof(private_data_t));
+    p_memset(&private_data, 0, sizeof(private_data_t));
 
     private_data.coreinit_handle = coreinit_handle;
-    private_data.memset = memset;
+    private_data.memset = p_memset;
     private_data.data_elf = (unsigned char *) ___sd_loader_sd_loader_elf; // use this address as temporary to load the elf
 
     OSDynLoad_FindExport(coreinit_handle, 1, "MEMAllocFromDefaultHeapEx", &functionPointer);
@@ -234,7 +234,7 @@ void __main(void)
     private_data.MEMFreeToDefaultHeap(stack);
 
     //! we are done -> exit browser now
-    private_data._Exit();
+    private_data._Exit(0);
 }
 
 void ExitFailure(private_data_t *private_data, const char *failure)
@@ -287,7 +287,7 @@ void ExitFailure(private_data_t *private_data, const char *failure)
     unsigned int t1 = 0x3FFFFFFF;
     while(t1--) asm volatile("nop");
 
-    private_data->_Exit();
+    private_data->_Exit(0);
 }
 
 /* *****************************************************************************
