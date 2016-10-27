@@ -24,8 +24,7 @@ TcpReceiver::TcpReceiver(int port)
     height = progressWindow.getHeight();
     append(&progressWindow);
 
-    u32 ApplicationMemoryEnd;
-    asm volatile("lis %0, __CODE_END@h; ori %0, %0, __CODE_END@l" : "=r" (ApplicationMemoryEnd));
+    u32 ApplicationMemoryEnd = getApplicationEndAddr();
 
     loadAddress = (unsigned char*)ApplicationMemoryEnd;
     resumeThread();

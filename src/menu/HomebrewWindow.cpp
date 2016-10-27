@@ -21,6 +21,7 @@
 #include "fs/fs_utils.h"
 #include "system/AsyncDeleter.h"
 #include "utils/HomebrewXML.h"
+#include "utils/utils.h"
 #include "HomebrewLaunchWindow.h"
 
 #define DEFAULT_WIILOAD_PORT        4299
@@ -328,8 +329,7 @@ void HomebrewWindow::OnTcpReceiveFinish(GuiElement *element, u32 ip, int result)
 
     if(result > 0)
     {
-        u32 ApplicationMemoryEnd;
-        asm volatile("lis %0, __CODE_END@h; ori %0, %0, __CODE_END@l" : "=r" (ApplicationMemoryEnd));
+        u32 ApplicationMemoryEnd = getApplicationEndAddr();
 
         ELF_DATA_ADDR = ApplicationMemoryEnd;
         ELF_DATA_SIZE = result;

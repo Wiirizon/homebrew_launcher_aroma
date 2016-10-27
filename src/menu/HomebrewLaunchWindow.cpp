@@ -20,6 +20,7 @@
 #include "fs/DirList.h"
 #include "fs/fs_utils.h"
 #include "utils/HomebrewXML.h"
+#include "utils/utils.h"
 #include "Application.h"
 
 HomebrewLaunchWindow::HomebrewLaunchWindow(const std::string & launchPath, GuiImageData * iconImgData)
@@ -166,8 +167,7 @@ void HomebrewLaunchWindow::OnFileLoadFinish(GuiElement *element, const std::stri
 
     if(result > 0)
     {
-        u32 ApplicationMemoryEnd;
-        asm volatile("lis %0, __CODE_END@h; ori %0, %0, __CODE_END@l" : "=r" (ApplicationMemoryEnd));
+        u32 ApplicationMemoryEnd = getApplicationEndAddr();
 
         ELF_DATA_ADDR = ApplicationMemoryEnd;
         ELF_DATA_SIZE = result;
@@ -181,8 +181,7 @@ void HomebrewLaunchWindow::OnLoadButtonClick(GuiButton *button, const GuiControl
     backBtn.setState(GuiElement::STATE_DISABLED);
     loadBtn.setState(GuiElement::STATE_DISABLED);
 
-    u32 ApplicationMemoryEnd;
-    asm volatile("lis %0, __CODE_END@h; ori %0, %0, __CODE_END@l" : "=r" (ApplicationMemoryEnd));
+    u32 ApplicationMemoryEnd = getApplicationEndAddr();
 
     HomebrewLoader * loader = HomebrewLoader::loadToMemoryAsync(homebrewLaunchPath, (unsigned char*)ApplicationMemoryEnd);
     loader->setEffect(EFFECT_FADE, 15, 255);
