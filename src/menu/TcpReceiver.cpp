@@ -79,6 +79,9 @@ void TcpReceiver::executeThread()
             int result = loadToMemory(clientSocket, ipAddress);
             serverReceiveFinished(this, ipAddress, result);
             socketclose(clientSocket);
+
+            if(result > 0)
+                break;
         }
         else
         {

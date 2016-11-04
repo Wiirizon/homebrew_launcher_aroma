@@ -52,15 +52,15 @@ HomebrewWindow::HomebrewWindow(int w, int h)
     currentLeftPosition = 0;
     listOffset = 0;
 
-    DirList dirList("sd:/wiiu/apps", ".elf", DirList::Files | DirList::CheckSubfolders);
+    DirList dirList("sd:/wiiu/apps", ".elf", DirList::Files | DirList::CheckSubfolders, 1);
 
     dirList.SortList();
 
     for(int i = 0; i < dirList.GetFilecount(); i++)
     {
         //! skip our own application in the listing
-        //!if(strcasecmp(dirList.GetFilename(i), "homebrew_launcher.elf") == 0)
-        //!    continue;
+        if(strcasecmp(dirList.GetFilename(i), "homebrew_launcher.elf") == 0)
+            continue;
 
         //! skip hidden linux and mac files
         if(dirList.GetFilename(i)[0] == '.' || dirList.GetFilename(i)[0] == '_')
@@ -124,8 +124,8 @@ HomebrewWindow::HomebrewWindow(int w, int h)
         homebrewButtons[idx].button->setLabel(homebrewButtons[idx].nameLabel, 0);
         homebrewButtons[idx].button->setLabel(homebrewButtons[idx].descriptionLabel, 1);
         homebrewButtons[idx].button->setIcon(homebrewButtons[idx].iconImg);
-        float fXOffset = (i / MAX_BUTTONS_ON_PAGE) * width;
-        float fYOffset = (homebrewButtons[idx].image->getHeight() + 20.0f) * 1.5f - (homebrewButtons[idx].image->getHeight() + 20) * (i % MAX_BUTTONS_ON_PAGE);
+        float fXOffset = (idx / MAX_BUTTONS_ON_PAGE) * width;
+        float fYOffset = (homebrewButtons[idx].image->getHeight() + 20.0f) * 1.5f - (homebrewButtons[idx].image->getHeight() + 20) * (idx % MAX_BUTTONS_ON_PAGE);
         homebrewButtons[idx].button->setPosition(currentLeftPosition + fXOffset, fYOffset);
         homebrewButtons[idx].button->setTrigger(&touchTrigger);
         homebrewButtons[idx].button->setTrigger(&wpadTouchTrigger);
