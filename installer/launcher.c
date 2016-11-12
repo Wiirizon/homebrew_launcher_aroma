@@ -23,6 +23,14 @@
     #define KERN_SYSCALL_TBL_3                          0xFFE85470 // works with loader
     #define KERN_SYSCALL_TBL_4                          0xFFEA9CE0 // works with home menu
     #define KERN_SYSCALL_TBL_5                          0xFFEAA0E0 // works with browser (previously KERN_SYSCALL_TBL)
+
+    #define address_LiWaitIopComplete                   0x0100FFA4
+    #define address_LiWaitIopCompleteWithInterrupts     0x0100FE90
+    #define address_LiWaitOneChunk                      0x010007EC
+    #define address_PrepareTitle_hook                   0xFFF18558
+    #define address_sgIsLoadingBuffer                   0xEFE19D00
+    #define address_gDynloadInitialized                 0xEFE13C3C
+
 #elif ( (VER == 500) || (VER == 510) )
     #define ADDRESS_OSTitle_main_entry_ptr              0x1005CB00
     #define ADDRESS_main_entry_hook                     0x0101C15C
@@ -32,6 +40,14 @@
     #define KERN_SYSCALL_TBL_3                          0xFFE85470 // works with loader
     #define KERN_SYSCALL_TBL_4                          0xFFEA9120 // works with home menu
     #define KERN_SYSCALL_TBL_5                          0xFFEA9520 // works with browser (previously KERN_SYSCALL_TBL)
+
+    #define address_LiWaitIopComplete                   0x0100FBC4
+    #define address_LiWaitIopCompleteWithInterrupts     0x0100FAB0
+    #define address_LiWaitOneChunk                      0x010007EC
+    #define address_PrepareTitle_hook                   0xFFF18534
+    #define address_sgIsLoadingBuffer                   0xEFE19D00
+    #define address_gDynloadInitialized                 0xEFE13C3C
+
 #elif (VER == 550)
     #define ADDRESS_OSTitle_main_entry_ptr              0x1005E040
     #define ADDRESS_main_entry_hook                     0x0101c56c
@@ -41,6 +57,13 @@
     #define KERN_SYSCALL_TBL_3                          0xFFE85470 // works with loader
     #define KERN_SYSCALL_TBL_4                          0xFFEAAA60 // works with home menu
     #define KERN_SYSCALL_TBL_5                          0xFFEAAE60 // works with browser (previously KERN_SYSCALL_TBL)
+
+    #define address_LiWaitIopComplete                   0x01010180
+    #define address_LiWaitIopCompleteWithInterrupts     0x0101006C
+    #define address_LiWaitOneChunk                      0x0100080C
+    #define address_PrepareTitle_hook                   0xFFF184E4
+    #define address_sgIsLoadingBuffer                   0xEFE19E80
+    #define address_gDynloadInitialized                 0xEFE13DBC
 #elif (VER == 410)
     #define ADDRESS_OSTitle_main_entry_ptr              0x1005A8C0
     #define ADDRESS_main_entry_hook                     0x0101BD4C
@@ -50,6 +73,13 @@
     #define KERN_SYSCALL_TBL_3                          0xFFE85C90
     #define KERN_SYSCALL_TBL_4                          0xFFE85490
     #define KERN_SYSCALL_TBL_5                          0xFFE85890 // works with browser
+
+    #define address_LiWaitIopComplete                   0x0100F78C
+    #define address_LiWaitIopCompleteWithInterrupts     0x0100F678
+    #define address_LiWaitOneChunk                      0x010007F8
+    #define address_PrepareTitle_hook                   0xFFF166DC
+    #define address_sgIsLoadingBuffer                   0xEFE19CC0
+    #define address_gDynloadInitialized                 0xEFE13BFC
 #elif (VER == 400)
     #define ADDRESS_OSTitle_main_entry_ptr              0x1005A600
     #define ADDRESS_main_entry_hook                     0x0101BD4C
@@ -59,6 +89,13 @@
     #define KERN_SYSCALL_TBL_3                          0xFFE85C90
     #define KERN_SYSCALL_TBL_4                          0xFFE85490
     #define KERN_SYSCALL_TBL_5                          0xFFE85890 // works with browser
+
+    #define address_LiWaitIopComplete                   0x0100F78C
+    #define address_LiWaitIopCompleteWithInterrupts     0x0100F678
+    #define address_LiWaitOneChunk                      0x010007F8
+    #define address_PrepareTitle_hook                   0xFFF15E70
+    #define address_sgIsLoadingBuffer                   0xEFE19CC0
+    #define address_gDynloadInitialized                 0xEFE13BFC
 #elif ( (VER == 300) || (VER == 310) )
     #define ADDRESS_OSTitle_main_entry_ptr              0x1005BBC0
     #define ADDRESS_main_entry_hook                     0x0101894C // used OSDynLoad_Acquire 0x01022CBC from libwiiu to calculate
@@ -496,6 +533,15 @@ static void InstallPatches(private_data_t *private_data)
     osSpecificFunctions.addr_KernSyscallTbl3 = KERN_SYSCALL_TBL_3;
     osSpecificFunctions.addr_KernSyscallTbl4 = KERN_SYSCALL_TBL_4;
     osSpecificFunctions.addr_KernSyscallTbl5 = KERN_SYSCALL_TBL_5;
+
+    osSpecificFunctions.LiWaitIopComplete = (int (*)(int, int *)) address_LiWaitIopComplete;
+    osSpecificFunctions.LiWaitIopCompleteWithInterrupts = (int (*)(int, int *)) address_LiWaitIopCompleteWithInterrupts;
+    osSpecificFunctions.addr_LiWaitOneChunk = address_LiWaitOneChunk;
+    osSpecificFunctions.addr_PrepareTitle_hook = address_PrepareTitle_hook;
+    osSpecificFunctions.addr_sgIsLoadingBuffer = address_sgIsLoadingBuffer;
+    osSpecificFunctions.addr_gDynloadInitialized = address_gDynloadInitialized;
+    osSpecificFunctions.orig_LiWaitOneChunkInstr = *(unsigned int*)address_LiWaitOneChunk;
+
     //! pointer to main entry point of a title
     osSpecificFunctions.addr_OSTitle_main_entry = ADDRESS_OSTitle_main_entry_ptr;
 

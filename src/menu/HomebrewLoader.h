@@ -22,15 +22,14 @@ public:
     };
 
 
-    static HomebrewLoader * loadToMemoryAsync(const std::string & filepath, unsigned char *address);
+    static HomebrewLoader * loadToMemoryAsync(const std::string & filepath);
     sigslot::signal3<GuiElement *, const std::string &, int> asyncLoadFinished;
 private:
 
-    HomebrewLoader(const std::string & file, unsigned char *address)
+    HomebrewLoader(const std::string & file)
         : GuiFrame(0, 0)
         , CThread(CThread::eAttributeAffCore0 | CThread::eAttributePinnedAff)
         , filepath(file)
-        , loadAddress(address)
         , progressWindow("Loading file...")
 	{
 	    append(&progressWindow);
@@ -45,7 +44,6 @@ private:
     static void loadCallback(CThread *thread, void *arg);
 
     const std::string filepath;
-    unsigned char *loadAddress;
     ProgressWindow progressWindow;
 };
 

@@ -167,10 +167,6 @@ void HomebrewLaunchWindow::OnFileLoadFinish(GuiElement *element, const std::stri
 
     if(result > 0)
     {
-        u32 ApplicationMemoryEnd = getApplicationEndAddr();
-
-        ELF_DATA_ADDR = ApplicationMemoryEnd;
-        ELF_DATA_SIZE = result;
         Application::instance()->quit(EXIT_SUCCESS);
     }
 }
@@ -181,9 +177,7 @@ void HomebrewLaunchWindow::OnLoadButtonClick(GuiButton *button, const GuiControl
     backBtn.setState(GuiElement::STATE_DISABLED);
     loadBtn.setState(GuiElement::STATE_DISABLED);
 
-    u32 ApplicationMemoryEnd = getApplicationEndAddr();
-
-    HomebrewLoader * loader = HomebrewLoader::loadToMemoryAsync(homebrewLaunchPath, (unsigned char*)ApplicationMemoryEnd);
+    HomebrewLoader * loader = HomebrewLoader::loadToMemoryAsync(homebrewLaunchPath);
     loader->setEffect(EFFECT_FADE, 15, 255);
     loader->effectFinished.connect(this, &HomebrewLaunchWindow::OnOpenEffectFinish);
     loader->asyncLoadFinished.connect(this, &HomebrewLaunchWindow::OnFileLoadFinish);

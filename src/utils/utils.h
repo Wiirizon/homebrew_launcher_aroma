@@ -41,6 +41,7 @@ extern "C" {
 #define le64(i)         ((((u64)le32((i) & 0xFFFFFFFFLL)) << 32) | ((u64)le32(((i) & 0xFFFFFFFF00000000LL) >> 32)))
 
 unsigned int getApplicationEndAddr(void);
+void SC0x25_KernelCopyData(unsigned int addr, unsigned int src, unsigned int len);
 
 #ifdef __cplusplus
 }

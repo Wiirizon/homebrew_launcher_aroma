@@ -52,7 +52,7 @@ HomebrewWindow::HomebrewWindow(int w, int h)
     currentLeftPosition = 0;
     listOffset = 0;
 
-    DirList dirList("sd:/wiiu/apps", ".elf", DirList::Files | DirList::CheckSubfolders, 1);
+    DirList dirList("sd:/wiiu/apps", ".elf,.rpx", DirList::Files | DirList::CheckSubfolders, 1);
 
     dirList.SortList();
 
@@ -314,8 +314,6 @@ void HomebrewWindow::OnCloseTcpReceiverFinish(GuiElement *element)
 
 void HomebrewWindow::OnTcpReceiveStart(GuiElement *element, u32 ip)
 {
-    setState(STATE_DISABLED);
-
     element->setEffect(EFFECT_FADE, 15, 255);
     element->effectFinished.connect(this, &HomebrewWindow::OnOpenEffectFinish);
     append(element);
@@ -329,10 +327,7 @@ void HomebrewWindow::OnTcpReceiveFinish(GuiElement *element, u32 ip, int result)
 
     if(result > 0)
     {
-        u32 ApplicationMemoryEnd = getApplicationEndAddr();
-
-        ELF_DATA_ADDR = ApplicationMemoryEnd;
-        ELF_DATA_SIZE = result;
+        log_printf("Launching homebrew, loaded to address %08X size %08X\n", ELF_DATA_ADDR, ELF_DATA_SIZE);
         Application::instance()->quit(EXIT_SUCCESS);
     }
 }

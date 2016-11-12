@@ -33,7 +33,6 @@ private:
     int loadToMemory(s32 clientSocket, u32 ipAddress);
 
     bool exitRequested;
-    unsigned char *loadAddress;
     s32 serverPort;
     s32 serverSocket;
     ProgressWindow progressWindow;
