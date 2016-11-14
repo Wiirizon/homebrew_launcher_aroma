@@ -272,8 +272,10 @@ static int LiWaitOneChunk(unsigned int * iRemainingBytes, const char *filename, 
             if((mapOffset + blockSize) >= mem_area->size)
             {
                 blockSize = mem_area->size - mapOffset;
+                //! this value is incremented later by blockSize, so set it to -blockSize for it to be 0 after copy
+                //! it makes smaller code then if(mapOffset == mem_area->size) after copy
+                mapOffset = -blockSize;
                 mem_area = mem_area->next;
-                mapOffset = 0;
             }
 
             SC0x25_KernelCopyData(load_addressPhys + rpxBlockPos, address, blockSize);
