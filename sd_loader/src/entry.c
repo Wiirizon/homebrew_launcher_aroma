@@ -1,8 +1,8 @@
 #include <gctypes.h>
 #include "elf_abi.h"
 #include "../../src/common/common.h"
-#include "../../src/common/fs_defs.h"
 #include "../../src/common/os_defs.h"
+#include "fs_defs.h"
 #include "kernel_defs.h"
 #include "loader_defs.h"
 
@@ -447,6 +447,26 @@ static int LoadFileToMem(private_data_t *private_data, const char *filepath, uns
     return success;
 }
 
+static void setup_patches(private_data_t *private_data)
+{
+    //! setup necessary syscalls and hooks for HBL
+    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl1 + (0x25 * 4)), (unsigned int)KernelCopyData);
+    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl2 + (0x25 * 4)), (unsigned int)KernelCopyData);
+    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl3 + (0x25 * 4)), (unsigned int)KernelCopyData);
+    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl4 + (0x25 * 4)), (unsigned int)KernelCopyData);
+    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl5 + (0x25 * 4)), (unsigned int)KernelCopyData);
+
+    //! store physical address for later use
+    addrphys_LiWaitOneChunk = private_data->OSEffectiveToPhysical((void*)OS_SPECIFICS->addr_LiWaitOneChunk);
+
+    u32 addr_my_PrepareTitle_hook = ((u32)my_PrepareTitle_hook) | 0x48000003;
+    DCFlushRange(&addr_my_PrepareTitle_hook, 4);
+
+    //! create our copy syscall
+    SC0x25_KernelCopyData(OS_SPECIFICS->addr_PrepareTitle_hook, private_data->OSEffectiveToPhysical(&addr_my_PrepareTitle_hook), 4);
+
+}
+
 static unsigned int load_elf_image (private_data_t *private_data, unsigned char *elfstart)
 {
 	Elf32_Ehdr *ehdr;
@@ -501,22 +521,6 @@ static unsigned int load_elf_image (private_data_t *private_data, unsigned char 
             DCFlushRange((void*)shdr[i].sh_addr, shdr[i].sh_size);
         }
     }
-
-    //! setup hooks
-    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl1 + (0x25 * 4)), (unsigned int)KernelCopyData);
-    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl2 + (0x25 * 4)), (unsigned int)KernelCopyData);
-    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl3 + (0x25 * 4)), (unsigned int)KernelCopyData);
-    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl4 + (0x25 * 4)), (unsigned int)KernelCopyData);
-    kern_write((void*)(OS_SPECIFICS->addr_KernSyscallTbl5 + (0x25 * 4)), (unsigned int)KernelCopyData);
-
-    //! store physical address for later use
-    addrphys_LiWaitOneChunk = private_data->OSEffectiveToPhysical((void*)OS_SPECIFICS->addr_LiWaitOneChunk);
-
-    u32 addr_my_PrepareTitle_hook = ((u32)my_PrepareTitle_hook) | 0x48000003;
-    DCFlushRange(&addr_my_PrepareTitle_hook, 4);
-
-    //! create our copy syscall
-    SC0x25_KernelCopyData(OS_SPECIFICS->addr_PrepareTitle_hook, private_data->OSEffectiveToPhysical(&addr_my_PrepareTitle_hook), 4);
 
 	return ehdr->e_entry;
 }
@@ -593,6 +597,9 @@ int _start(int argc, char **argv)
 
             if(MAIN_ENTRY_ADDR == 0xDEADC0DE || MAIN_ENTRY_ADDR == 0)
             {
+                //! setup necessary syscalls and hooks for HBL before launching it
+                setup_patches(&private_data);
+
                 if(HBL_CHANNEL)
                 {
                     break;
