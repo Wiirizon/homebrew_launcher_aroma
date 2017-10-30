@@ -25,7 +25,7 @@ extern "C" int Menu_Main(void)
     InitOSFunctionPointers();
     InitSocketFunctionPointers();
 
-    log_init("192.168.178.3");
+    log_init();
     log_print("Starting launcher\n");
 
     InitFSFunctionPointers();
@@ -62,7 +62,7 @@ extern "C" int Menu_Main(void)
     unmount_sd_fat("sd");
     log_printf("Release memory\n");
     memoryRelease();
-    log_deinit();
+    //log_deinit();
 
     return returnCode;
 }

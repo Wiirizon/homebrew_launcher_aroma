@@ -65,7 +65,7 @@ class GuiFrame : public GuiElement
         void clearState(int s, int c = -1);
 		//!Gets the index of the GuiElement inside the window that is currently selected
 		//!\return index of selected GuiElement
-		int getSelected();
+		s32 getSelected();
 		//!Dim the Window's background
 		void dimBackground(bool d);
 		//!Draws all the elements in this GuiFrame

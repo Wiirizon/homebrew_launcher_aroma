@@ -24,7 +24,7 @@ class VPadController : public GuiController
 {
 public:
     //!Constructor
-    VPadController(int channel)
+    VPadController(s32 channel)
         : GuiController(channel)
     {
         memset(&vpad, 0, sizeof(vpad));
@@ -33,23 +33,26 @@ public:
     //!Destructor
     virtual ~VPadController()  {}
 
-    bool update(int width, int height)
+    bool update(s32 width, s32 height)
     {
         lastData = data;
 
-        int vpadError = -1;
+        s32 vpadError = -1;
         VPADRead(0, &vpad, 1, &vpadError);
 
-        if(vpadError == 0)
-        {
+        if(vpadError == 0){
             data.buttons_r = vpad.btns_r;
             data.buttons_h = vpad.btns_h;
             data.buttons_d = vpad.btns_d;
             data.validPointer = !vpad.tpdata.invalid;
             data.touched = vpad.tpdata.touched;
+
+            VPADGetTPCalibratedPoint(0, &tpCalib, &vpad.tpdata1);
+
             //! calculate the screen offsets
-            data.x = -(width >> 1) + (int)((vpad.tpdata1.x * width) >> 12);
-            data.y = (height >> 1) - (int)(height - ((vpad.tpdata1.y * height) >> 12));
+            data.x = -(width >> 1) + (s32)(((float)tpCalib.x / 1280.0f) * (float)width);
+            data.y = -(height >> 1) + (s32)(float)height - (((float)tpCalib.y / 720.0f) * (float)height);
+
             return true;
         }
         return false;
@@ -57,6 +60,7 @@ public:
 
 private:
     VPADData vpad;
+    VPADTPData tpCalib;
 };
 
 #endif

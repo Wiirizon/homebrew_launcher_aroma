@@ -50,12 +50,12 @@ GuiImageAsync::~GuiImageAsync()
 {
 	threadRemoveImage(this);
 	while(pInUse == this)
-        usleep(1000);
+        os_usleep(1000);
 
 	if (imgData)
         delete imgData;
 
-    threadExit();
+    //threadExit();
 }
 
 void GuiImageAsync::threadAddImage(GuiImageAsync *Image)
@@ -114,7 +114,7 @@ void GuiImageAsync::guiImageAsyncThread(CThread *thread, void *arg)
                 u8 *buffer = NULL;
                 u32 bufferSize = 0;
 
-                int iResult = LoadFileToMem(pInUse->filename.c_str(), &buffer, &bufferSize);
+                s32 iResult = LoadFileToMem(pInUse->filename.c_str(), &buffer, &bufferSize);
                 if(iResult > 0)
                 {
                     pInUse->imgData = new GuiImageData(buffer, bufferSize, GX2_TEX_CLAMP_MIRROR);
@@ -138,7 +138,7 @@ void GuiImageAsync::guiImageAsyncThread(CThread *thread, void *arg)
                     pInUse->imgData = NULL;
                 }
             }
-
+            pInUse->imageLoaded(pInUse);
 			pInUse = NULL;
 		}
 	}
@@ -159,9 +159,11 @@ void GuiImageAsync::threadInit()
 
 void GuiImageAsync::threadExit()
 {
-    --threadRefCounter;
+    if(threadRefCounter){
+        --threadRefCounter;
+    }
 
-	if((threadRefCounter == 0) && (pThread != NULL))
+	if(/*(threadRefCounter == 0) &&*/ (pThread != NULL))
 	{
 	    bExitRequested = true;
         delete pThread;

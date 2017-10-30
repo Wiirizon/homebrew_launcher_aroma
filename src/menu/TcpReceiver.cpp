@@ -81,7 +81,7 @@ void TcpReceiver::executeThread()
         }
         else
         {
-            usleep(100000);
+            os_usleep(100000);
         }
     }
 
@@ -116,7 +116,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
     if(!loadAddress)
     {
         progressWindow.setTitle("Not enough memory");
-        sleep(1);
+        os_sleep(1);
         return NOT_ENOUGH_MEMORY;
     }
 
@@ -146,7 +146,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
         free(loadAddress);
         log_printf("File loading not finished, %i of %i bytes received\n", bytesRead, fileSize);
         progressWindow.setTitle("Receive incomplete");
-        sleep(1);
+        os_sleep(1);
         return FILE_READ_ERROR;
     }
 
@@ -169,7 +169,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
             {
                 free(loadAddress);
                 progressWindow.setTitle("Not enough memory");
-                sleep(1);
+                os_sleep(1);
                 return NOT_ENOUGH_MEMORY;
             }
 
@@ -187,7 +187,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
                 free(loadAddress);
                 free(inflatedData);
                 progressWindow.setTitle("Uncompress failure");
-                sleep(1);
+                os_sleep(1);
                 return FILE_READ_ERROR;
             }
 
@@ -203,7 +203,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
                 free(loadAddress);
                 free(inflatedData);
                 progressWindow.setTitle("Uncompress failure");
-                sleep(1);
+                os_sleep(1);
                 return FILE_READ_ERROR;
             }
 
@@ -218,7 +218,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
             {
                 free(loadAddress);
                 progressWindow.setTitle("Not enough memory");
-                sleep(1);
+                os_sleep(1);
                 return NOT_ENOUGH_MEMORY;
             }
 
@@ -228,7 +228,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
             {
                 log_printf("uncompress failed %i\n", result);
                 progressWindow.setTitle("Uncompress failure");
-                sleep(1);
+                os_sleep(1);
                 return FILE_READ_ERROR;
             }
 
@@ -252,7 +252,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
     if(res < 0)
     {
         progressWindow.setTitle("Not enough memory");
-        sleep(1);
+        os_sleep(1);
         return NOT_ENOUGH_MEMORY;
     }
 
