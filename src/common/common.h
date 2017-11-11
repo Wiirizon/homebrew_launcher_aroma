@@ -5,7 +5,8 @@
 extern "C" {
 #endif
 
-#include "os_defs.h"
+#include <dynamic_libs/os_defs.h>
+#include <dynamic_libs/os_types.h>
 
 #define HBL_VERSION                 "v1.4"
 
@@ -23,9 +24,6 @@ extern "C" {
 #define RPX_MAX_SIZE                (*(volatile unsigned int*)(MEM_BASE + 0x1300 + 0x0C))
 #define RPX_MAX_CODE_SIZE           (*(volatile unsigned int*)(MEM_BASE + 0x1300 + 0x10))
 #define MAIN_ENTRY_ADDR             (*(volatile unsigned int*)(MEM_BASE + 0x1400 + 0x00))
-#define OS_FIRMWARE                 (*(volatile unsigned int*)(MEM_BASE + 0x1400 + 0x04))
-
-#define OS_SPECIFICS                ((OsSpecifics*)(MEM_BASE + 0x1500))
 
 #define MEM_AREA_TABLE              ((s_mem_area*)(MEM_BASE + 0x1600))
 

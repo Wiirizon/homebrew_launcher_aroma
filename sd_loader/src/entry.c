@@ -1,4 +1,4 @@
-#include <gctypes.h>
+#include <dynamic_libs/os_types.h>
 #include "elf_abi.h"
 #include "../../src/common/common.h"
 #include "../../src/common/os_defs.h"

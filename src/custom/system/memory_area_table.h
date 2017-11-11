@@ -14,56 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
-#ifndef _CMUTEX_H_
-#define _CMUTEX_H_
+#ifndef _MEMORY_AREA_TABLE_H_
+#define _MEMORY_AREA_TABLE_H_
 
-#include <malloc.h>
-#include "dynamic_libs/os_functions.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class CMutex
-{
-public:
-    CMutex() {
-        pMutex = malloc(OS_MUTEX_SIZE);
-        if(!pMutex)
-            return;
+#include "common/common.h"
 
-        OSInitMutex(pMutex);
-    }
-    virtual ~CMutex() {
-        if(pMutex)
-            free(pMutex);
-    }
+void memoryInitAreaTable();
+s_mem_area * memoryGetAreaTable(void);
 
-    void lock(void) {
-        if(pMutex)
-            OSLockMutex(pMutex);
-    }
-    void unlock(void) {
-        if(pMutex)
-            OSUnlockMutex(pMutex);
-    }
-    bool tryLock(void) {
-        if(!pMutex)
-            return false;
+#ifdef __cplusplus
+}
+#endif
 
-        return (OSTryLockMutex(pMutex) != 0);
-    }
-private:
-    void *pMutex;
-};
-
-class CMutexLock
-{
-public:
-    CMutexLock() {
-        mutex.lock();
-    }
-    virtual ~CMutexLock() {
-        mutex.unlock();
-    }
-private:
-    CMutex mutex;
-};
-
-#endif // _CMUTEX_H_
+#endif // _MEMORY_AREA_TABLE_H_

@@ -63,8 +63,16 @@ Application::~Application()
     for(int i = 0; i < 5; i++)
         delete controller[i];
 
-    log_printf("Destroy async deleter\n");
-	AsyncDeleter::destroyInstance();
+    //We may have to handle Asyncdelete in the Destructors.
+    DEBUG_FUNCTION_LINE("Destroy async deleter\n");
+    do{
+        DEBUG_FUNCTION_LINE("Triggering AsyncDeleter\n");
+        AsyncDeleter::triggerDeleteProcess();
+        while(!AsyncDeleter::realListEmpty()){
+            os_usleep(1000);
+        }
+    }while(!AsyncDeleter::deleteListEmpty());
+    AsyncDeleter::destroyInstance();
 
     log_printf("Clear resources\n");
     Resources::Clear();

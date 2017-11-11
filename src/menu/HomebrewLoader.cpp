@@ -31,7 +31,7 @@ int HomebrewLoader::loadToMemory()
     CFile file(filepath, CFile::ReadOnly);
     if(!file.isOpen())
     {
-        progressWindow.setTitle(strfmt("Failed to open file %s", FullpathToFilename(filepath.c_str())));
+        progressWindow.setTitle(StringTools::strfmt("Failed to open file %s", StringTools::FullpathToFilename(filepath.c_str())));
         os_sleep(1);
         return FILE_OPEN_FAILURE;
     }
@@ -39,7 +39,7 @@ int HomebrewLoader::loadToMemory()
     u32 bytesRead = 0;
     u32 fileSize = file.size();
 
-    progressWindow.setTitle(strfmt("Loading file %s", FullpathToFilename(filepath.c_str())));
+    progressWindow.setTitle(StringTools::strfmt("Loading file %s", StringTools::FullpathToFilename(filepath.c_str())));
 
     unsigned char *buffer = (unsigned char*) memalign(0x40, (fileSize + 0x3F) & ~0x3F);
     if(!buffer)
