@@ -18,9 +18,9 @@
 #include "common/common.h"
 #include "Application.h"
 #include "fs/DirList.h"
-#include "fs/fs_utils.h"
+#include "fs/FSUtils.h"
 #include "system/AsyncDeleter.h"
-#include "utils/HomebrewXML.h"
+#include "custom/utils/HomebrewXML.h"
 #include "utils/utils.h"
 #include "HomebrewLaunchWindow.h"
 
@@ -82,7 +82,7 @@ HomebrewWindow::HomebrewWindow(int w, int h)
         u8 * iconData = NULL;
         u32 iconDataSize = 0;
 
-        LoadFileToMem((homebrewPath + "/icon.png").c_str(), &iconData, &iconDataSize);
+        FSUtils::LoadFileToMem((homebrewPath + "/icon.png").c_str(), &iconData, &iconDataSize);
 
         if(iconData != NULL)
         {

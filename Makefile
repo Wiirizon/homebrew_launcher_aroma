@@ -1,3 +1,5 @@
+DO_LOGGING := 0
+
 #---------------------------------------------------------------------------------
 # Clear the implicit built in rules
 #---------------------------------------------------------------------------------
@@ -32,22 +34,11 @@ TARGET		:=	homebrew_launcher
 BUILD		:=	build
 BUILD_DBG	:=	$(TARGET)_dbg
 SOURCES		:=	src \
-				src/dynamic_libs \
-				src/fs \
-				src/game \
-				src/gui \
-				src/kernel \
-				src/loader \
+				src/custom/system \
+				src/custom/utils \
 				src/menu \
-				src/network \
-				src/patcher \
 				src/resources \
-				src/settings \
-				src/sounds \
-				src/system \
-				src/utils \
-				src/video \
-				src/video/shaders
+
 DATA		:=	data \
 				data/images \
 				data/fonts \
@@ -62,6 +53,12 @@ CFLAGS	:=  -std=gnu11 -mrvl -mcpu=750 -meabi -mhard-float -ffast-math \
 		    -O3 -Wall -Wextra -Wno-unused-parameter -Wno-strict-aliasing $(INCLUDE)
 CXXFLAGS := -std=gnu++11 -mrvl -mcpu=750 -meabi -mhard-float -ffast-math \
 		    -O3 -Wall -Wextra -Wno-unused-parameter -D_GNU_SOURCE -Wno-strict-aliasing $(INCLUDE)
+			
+ifeq ($(DO_LOGGING), 1)
+   CFLAGS += -D__LOGGING__
+   CXXFLAGS += -D__LOGGING__
+endif	
+
 ASFLAGS	:= -mregnames
 LDFLAGS	:= -nostartfiles -Wl,-Map,$(notdir $@).map,-wrap,malloc,-wrap,free,-wrap,memalign,-wrap,calloc,-wrap,realloc,-wrap,malloc_usable_size,-wrap,_malloc_r,-wrap,_free_r,-wrap,_realloc_r,-wrap,_calloc_r,-wrap,_memalign_r,-wrap,_malloc_usable_size_r,-wrap,valloc,-wrap,_valloc_r,-wrap,_pvalloc_r,--gc-sections
 
@@ -71,7 +68,7 @@ MAKEFLAGS += --no-print-directory
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:= -lgcc -lgd -lpng -lz -lfreetype -lmad -lvorbisidec
+LIBS	:= -lgui -lutils -ldynamiclibs -lfreetype -lgd -lpng -ljpeg -lz  -lmad -lvorbisidec -lzip
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -125,7 +122,8 @@ export OFILES	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					-I$(CURDIR)/$(BUILD) -I$(LIBOGC_INC) \
-					-I$(PORTLIBS)/include -I$(PORTLIBS)/include/freetype2
+					-I$(PORTLIBS)/include -I$(PORTLIBS)/include/freetype2 \
+					-I$(PORTLIBS)/include/libutils -I$(PORTLIBS)/include/libgui
 
 #---------------------------------------------------------------------------------
 # build a list of library paths

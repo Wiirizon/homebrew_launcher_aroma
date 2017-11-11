@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
+#include <fs/DirList.h>
+#include <fs/FSUtils.h>
+#include <utils/utils.h>
+
 #include "HomebrewLaunchWindow.h"
 #include "HomebrewLoader.h"
 #include "common/common.h"
-#include "fs/DirList.h"
-#include "fs/fs_utils.h"
-#include "utils/HomebrewXML.h"
-#include "utils/utils.h"
+#include "custom/utils/HomebrewXML.h"
 #include "Application.h"
 
 HomebrewLaunchWindow::HomebrewLaunchWindow(const std::string & launchPath, GuiImageData * iconImgData)

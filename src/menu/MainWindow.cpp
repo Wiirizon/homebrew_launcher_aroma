@@ -26,7 +26,7 @@ MainWindow::MainWindow(int w, int h)
     : width(w)
     , height(h)
     , bgImageColor(w, h, (GX2Color){ 0, 0, 0, 0 })
-    , bgParticleImg(w, h, 500)
+    , bgParticleImg(w, h, 500, 30.0f,30.0f,0.2f,0.8f)
     , homebrewWindow(w, h)
 {
     bgImageColor.setImageColor((GX2Color){  79, 153, 239, 255 }, 0);
@@ -38,7 +38,7 @@ MainWindow::MainWindow(int w, int h)
 
     for(int i = 0; i < 4; i++)
     {
-        std::string filename = strfmt("player%i_point.png", i+1);
+        std::string filename = StringTools::strfmt("player%i_point.png", i+1);
         pointerImgData[i] = Resources::GetImageData(filename.c_str());
         pointerImg[i] = new GuiImage(pointerImgData[i]);
         pointerImg[i]->setScale(1.5f);

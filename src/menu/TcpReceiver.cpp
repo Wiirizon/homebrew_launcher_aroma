@@ -5,12 +5,12 @@
 
 #include "TcpReceiver.h"
 #include "HomebrewMemory.h"
-#include "dynamic_libs/os_functions.h"
-#include "dynamic_libs/socket_functions.h"
-#include "fs/CFile.hpp"
-#include "utils/logger.h"
-#include "utils/StringTools.h"
-#include "utils/net.h"
+#include <dynamic_libs/os_functions.h>
+#include <dynamic_libs/socket_functions.h>
+#include <fs/CFile.hpp>
+#include <utils/logger.h>
+#include <utils/StringTools.h>
+#include "custom/utils/net.h"
 
 TcpReceiver::TcpReceiver(int port)
     : GuiFrame(0, 0)
@@ -108,7 +108,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
     u32 bytesRead = 0;
     struct in_addr in;
     in.s_addr = ipAddress;
-    progressWindow.setTitle(strfmt("Loading file from %s", inet_ntoa(in)));
+    progressWindow.setTitle(StringTools::strfmt("Loading file from %s", inet_ntoa(in)));
 
     log_printf("transfer start\n");
 
