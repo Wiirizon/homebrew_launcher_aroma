@@ -1,7 +1,7 @@
 #include <dynamic_libs/os_types.h>
 #include "elf_abi.h"
-#include "../../src/common/common.h"
-#include "../../src/common/os_defs.h"
+#include "common.h"
+#include "os_defs.h"
 #include "fs_defs.h"
 #include "kernel_defs.h"
 #include "loader_defs.h"

@@ -5,7 +5,8 @@ AS = $(PREFIX)gcc
 CFLAGS = -std=gnu99 -Os -nostdinc -fno-builtin
 ASFLAGS = -mregnames -x assembler-with-cpp
 LD = $(PREFIX)ld
-LDFLAGS=-Ttext 1800000 --oformat binary -L$(DEVKITPPC)/lib/gcc/powerpc-eabi/4.8.2 -lgcc
+GCC_VER := $(shell $(DEVKITPPC)/bin/powerpc-eabi-gcc -dumpversion)
+LDFLAGS=-Ttext 1800000 --oformat binary -L$(DEVKITPPC)/lib/gcc/powerpc-eabi/$(GCC_VER) -lgcc
 OBJDUMP ?= $(PREFIX)objdump
 project	:=	.
 root	:=	$(CURDIR)

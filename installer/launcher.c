@@ -5,8 +5,8 @@
 #include "sd_loader.h"
 
 #define MEM_BASE                                        0xC0800000
-#include "../src/common/common.h"
-#include "../src/common/os_defs.h"
+#include "../sd_loader/src/common.h"
+#include "../sd_loader/src/os_defs.h"
 #include "../../libwiiu/src/coreinit.h"
 
 //! this shouldnt depend on OS
