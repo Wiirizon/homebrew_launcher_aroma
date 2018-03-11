@@ -32,7 +32,7 @@ TcpReceiver::~TcpReceiver()
     ICInvalidateRange((void*)&exitRequested, sizeof(exitRequested));
     DCFlushRange((void*)&exitRequested, sizeof(exitRequested));
 
-    if(serverSocket > 0)
+    if(serverSocket >= 0)
     {
         shutdown(serverSocket, SHUT_RDWR);
     }

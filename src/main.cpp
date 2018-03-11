@@ -26,9 +26,6 @@ extern "C" int Menu_Main(void)
     InitSocketFunctionPointers();
 
     log_init();
-    // For some reason this is required. Otherwise the HBL would softlock on loading application when the logging is disabled
-    // in the Makefile
-    socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
     DEBUG_FUNCTION_LINE("Starting launcher\n");
 
