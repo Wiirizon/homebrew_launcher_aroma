@@ -173,7 +173,7 @@ void Application::executeThread(void)
             mainWindow->update(controller[i]);
         }
 
-        mainWindow->process();
+        //mainWindow->process();
 
         //! start rendering DRC
 	    video->prepareDrcRendering();
