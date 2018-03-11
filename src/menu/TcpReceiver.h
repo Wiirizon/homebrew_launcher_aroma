@@ -32,7 +32,7 @@ private:
     void executeThread();
     int loadToMemory(s32 clientSocket, u32 ipAddress);
 
-    bool exitRequested;
+    volatile bool exitRequested;
     s32 serverPort;
     s32 serverSocket;
     ProgressWindow progressWindow;

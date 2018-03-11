@@ -26,7 +26,11 @@ extern "C" int Menu_Main(void)
     InitSocketFunctionPointers();
 
     log_init();
-    log_print("Starting launcher\n");
+    // For some reason this is required. Otherwise the HBL would softlock on loading application when the logging is disabled
+    // in the Makefile
+    socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    DEBUG_FUNCTION_LINE("Starting launcher\n");
 
     InitFSFunctionPointers();
     InitGX2FunctionPointers();
@@ -35,32 +39,33 @@ extern "C" int Menu_Main(void)
     InitPadScoreFunctionPointers();
     InitAXFunctionPointers();
 
-    log_print("Function exports loaded\n");
+    DEBUG_FUNCTION_LINE("Function exports loaded\n");
 
     //!*******************************************************************
     //!                    Initialize heap memory                        *
     //!*******************************************************************
-    log_print("Initialize memory management\n");
+    DEBUG_FUNCTION_LINE("Initialize memory management\n");
     memoryInitialize();
 
     //!*******************************************************************
     //!                        Initialize FS                             *
     //!*******************************************************************
-    log_printf("Mount SD partition\n");
+    DEBUG_FUNCTION_LINE("Mount SD partition\n");
     mount_sd_fat("sd");
 
     //!*******************************************************************
     //!                    Enter main application                        *
     //!*******************************************************************
-    log_printf("Start main application\n");
+    DEBUG_FUNCTION_LINE("Start main application\n");
     int returnCode = Application::instance()->exec();
-    log_printf("Main application stopped\n");
+
+    DEBUG_FUNCTION_LINE("Main application stopped\n");
 
     Application::destroyInstance();
 
-    log_printf("Unmount SD\n");
+    DEBUG_FUNCTION_LINE("Unmount SD\n");
     unmount_sd_fat("sd");
-    log_printf("Release memory\n");
+    DEBUG_FUNCTION_LINE("Release memory\n");
     memoryRelease();
     //log_deinit();
 

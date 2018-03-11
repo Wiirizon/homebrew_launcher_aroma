@@ -327,7 +327,7 @@ void HomebrewWindow::OnTcpReceiveFinish(GuiElement *element, u32 ip, int result)
 
     if(result > 0)
     {
-        log_printf("Launching homebrew, loaded to address %08X size %08X\n", ELF_DATA_ADDR, ELF_DATA_SIZE);
+        DEBUG_FUNCTION_LINE("Launching homebrew, loaded to address %08X size %08X\n", ELF_DATA_ADDR, ELF_DATA_SIZE);
         Application::instance()->quit(EXIT_SUCCESS);
     }
 }

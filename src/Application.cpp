@@ -54,14 +54,14 @@ Application::Application()
 
 Application::~Application()
 {
-    log_printf("Destroy music\n");
-
+    DEBUG_FUNCTION_LINE("Destroy music\n");
     delete bgMusic;
 
-    log_printf("Destroy controller\n");
+    DEBUG_FUNCTION_LINE("Destroy controller\n");
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 5; i++){
         delete controller[i];
+    }
 
     //We may have to handle Asyncdelete in the Destructors.
     DEBUG_FUNCTION_LINE("Destroy async deleter\n");
@@ -74,10 +74,10 @@ Application::~Application()
     }while(!AsyncDeleter::deleteListEmpty());
     AsyncDeleter::destroyInstance();
 
-    log_printf("Clear resources\n");
+    DEBUG_FUNCTION_LINE("Clear resources\n");
     Resources::Clear();
 
-    log_printf("Stop sound handler\n");
+    DEBUG_FUNCTION_LINE("Stop sound handler\n");
 	SoundHandler::DestroyInstance();
 }
 
@@ -141,21 +141,21 @@ void Application::fadeOut()
 
 void Application::executeThread(void)
 {
-    log_printf("Initialize video\n");
+    DEBUG_FUNCTION_LINE("Initialize video\n");
     video = new CVideo(GX2_TV_SCAN_MODE_720P, GX2_DRC_SINGLE);
 
-    log_printf("Video size %i x %i\n", video->getTvWidth(), video->getTvHeight());
+    DEBUG_FUNCTION_LINE("Video size %i x %i\n", video->getTvWidth(), video->getTvHeight());
 
     //! setup default Font
-    log_printf("Initialize main font system\n");
+    DEBUG_FUNCTION_LINE("Initialize main font system\n");
     FreeTypeGX *fontSystem = new FreeTypeGX(Resources::GetFile("font.ttf"), Resources::GetFileSize("font.ttf"), true);
     GuiText::setPresetFont(fontSystem);
 
-    log_printf("Initialize main window\n");
+    DEBUG_FUNCTION_LINE("Initialize main window\n");
 
     mainWindow = new MainWindow(video->getTvWidth(), video->getTvHeight());
 
-    log_printf("Entering main loop\n");
+    DEBUG_FUNCTION_LINE("Entering main loop\n");
 
     //! main GX2 loop (60 Hz cycle with max priority on core 1)
 	while(!exitApplication)
@@ -172,6 +172,8 @@ void Application::executeThread(void)
             //! update controller states
             mainWindow->update(controller[i]);
         }
+
+        mainWindow->process();
 
         //! start rendering DRC
 	    video->prepareDrcRendering();

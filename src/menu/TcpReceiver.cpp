@@ -29,6 +29,8 @@ TcpReceiver::TcpReceiver(int port)
 TcpReceiver::~TcpReceiver()
 {
     exitRequested = true;
+    ICInvalidateRange((void*)&exitRequested, sizeof(exitRequested));
+    DCFlushRange((void*)&exitRequested, sizeof(exitRequested));
 
     if(serverSocket > 0)
     {
@@ -41,6 +43,9 @@ void TcpReceiver::executeThread()
 	serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 	if (serverSocket < 0)
 		return;
+
+    ICInvalidateRange((void*)&serverSocket, sizeof(serverSocket));
+    DCFlushRange((void*)&serverSocket, sizeof(serverSocket));
 
     u32 enable = 1;
 	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
@@ -64,7 +69,6 @@ void TcpReceiver::executeThread()
 
 	struct sockaddr_in clientAddr;
 	s32 addrlen = sizeof(struct sockaddr);
-
     while(!exitRequested)
     {
         s32 clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &addrlen);
@@ -84,13 +88,12 @@ void TcpReceiver::executeThread()
             os_usleep(100000);
         }
     }
-
     socketclose(serverSocket);
 }
 
 int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
 {
-    log_printf("Loading file from ip %08X\n", ipAddress);
+    DEBUG_FUNCTION_LINE("Loading file from ip %08X\n", ipAddress);
 
     u32 fileSize = 0;
     u32 fileSizeUnc = 0;
@@ -110,7 +113,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
     in.s_addr = ipAddress;
     progressWindow.setTitle(StringTools::strfmt("Loading file from %s", inet_ntoa(in)));
 
-    log_printf("transfer start\n");
+    DEBUG_FUNCTION_LINE("transfer start\n");
 
     unsigned char* loadAddress = (unsigned char*)memalign(0x40, fileSize);
     if(!loadAddress)
@@ -132,7 +135,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
         int ret = recv(clientSocket, loadAddress + bytesRead, blockSize, 0);
         if(ret <= 0)
         {
-            log_printf("Failure on reading file\n");
+            DEBUG_FUNCTION_LINE("Failure on reading file\n");
             break;
         }
 
@@ -144,7 +147,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
     if(bytesRead != fileSize)
     {
         free(loadAddress);
-        log_printf("File loading not finished, %i of %i bytes received\n", bytesRead, fileSize);
+        DEBUG_FUNCTION_LINE("File loading not finished, %i of %i bytes received\n", bytesRead, fileSize);
         progressWindow.setTitle("Receive incomplete");
         os_sleep(1);
         return FILE_READ_ERROR;
@@ -226,7 +229,7 @@ int TcpReceiver::loadToMemory(s32 clientSocket, u32 ipAddress)
 			int result = uncompress((Bytef*)&inflatedData[0], &f, (Bytef*)loadAddress, fileSize);
 			if(result != Z_OK)
             {
-                log_printf("uncompress failed %i\n", result);
+                DEBUG_FUNCTION_LINE("uncompress failed %i\n", result);
                 progressWindow.setTitle("Uncompress failure");
                 os_sleep(1);
                 return FILE_READ_ERROR;

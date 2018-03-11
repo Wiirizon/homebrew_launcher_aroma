@@ -18,8 +18,8 @@
 #define _APPLICATION_H
 
 #include "menu/MainWindow.h"
-#include "video/CVideo.h"
-#include "system/CThread.h"
+#include <video/CVideo.h>
+#include <system/CThread.h>
 
 class Application : public CThread
 {
@@ -30,7 +30,7 @@ public:
         return applicationInstance;
     }
     static void destroyInstance() {
-        if(applicationInstance) {
+        if(applicationInstance != NULL) {
             delete applicationInstance;
             applicationInstance = NULL;
         }

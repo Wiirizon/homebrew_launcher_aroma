@@ -26,7 +26,7 @@ int HomebrewLoader::loadToMemory()
     if(filepath.empty())
         return INVALID_INPUT;
 
-    log_printf("Loading file %s\n", filepath.c_str());
+    DEBUG_FUNCTION_LINE("Loading file %s\n", filepath.c_str());
 
     CFile file(filepath, CFile::ReadOnly);
     if(!file.isOpen())
@@ -61,7 +61,7 @@ int HomebrewLoader::loadToMemory()
         int ret = file.read(buffer + bytesRead, blockSize);
         if(ret <= 0)
         {
-            log_printf("Failure on reading file %s\n", filepath.c_str());
+            DEBUG_FUNCTION_LINE("Failure on reading file %s\n", filepath.c_str());
             break;
         }
 
@@ -73,7 +73,7 @@ int HomebrewLoader::loadToMemory()
     if(bytesRead != fileSize)
     {
         free(buffer);
-        log_printf("File loading not finished for file %s, finished %i of %i bytes\n", filepath.c_str(), bytesRead, fileSize);
+        DEBUG_FUNCTION_LINE("File loading not finished for file %s, finished %i of %i bytes\n", filepath.c_str(), bytesRead, fileSize);
         progressWindow.setTitle("File read failure");
         os_sleep(1);
         return FILE_READ_ERROR;
