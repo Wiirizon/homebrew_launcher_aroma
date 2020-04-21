@@ -29,6 +29,16 @@ public:
 
     void draw(CVideo *pVideo);
 
+    void clearSelections()
+    {
+        for (unsigned int i = 0; i < homebrewButtons.size(); i++)
+        {
+            homebrewButtons[i].button->clearState(STATE_SELECTED);
+        }
+    }
+
+    sigslot::signal1<const GuiController*> selected;
+
 private:
     void OnOpenEffectFinish(GuiElement *element);
     void OnCloseEffectFinish(GuiElement *element);
@@ -37,19 +47,32 @@ private:
     void OnLeftArrowClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
     void OnRightArrowClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
 
+    int searchSelectedButton();
+    void OnUpDownClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
+
+    void OnAClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
+
     void OnCloseTcpReceiverFinish(GuiElement *element);
     void OnTcpReceiveStart(GuiElement *element, u32 ip);
     void OnTcpReceiveFinish(GuiElement *element, u32 ip, int result);
+
+    void LaunchBoxSelected(const GuiController* controller)
+    {
+        selected(controller);
+    }
 
     GuiSound *buttonClickSound;
     GuiImageData * homebrewButtonImgData;
 
     GuiImageData* arrowRightImageData;
     GuiImageData* arrowLeftImageData;
+    GuiImageData* homebrewButtonSelectedImageData;
     GuiImage arrowRightImage;
     GuiImage arrowLeftImage;
     GuiButton arrowRightButton;
     GuiButton arrowLeftButton;
+    GuiButton updownButtons;
+    GuiButton aButton;
     GuiText hblVersionText;
 
     typedef struct
@@ -61,6 +84,7 @@ private:
         GuiText *descriptionLabel;
         GuiImageData *iconImgData;
         GuiImage *iconImg;
+        GuiImage *selectImg;
     } homebrewButton;
 
     std::vector<homebrewButton> homebrewButtons;
@@ -68,11 +92,16 @@ private:
     GuiTrigger wpadTouchTrigger;
     GuiTrigger buttonLTrigger;
     GuiTrigger buttonRTrigger;
+    GuiTrigger buttonUpTrigger;
+    GuiTrigger buttonDownTrigger;
+    GuiTrigger buttonATrigger;
     int listOffset;
     int currentLeftPosition;
     int targetLeftPosition;
 
     TcpReceiver tcpReceiver;
+
+    bool inputDisabled;
 };
 
 #endif //_HOMEBREW_WINDOW_H_

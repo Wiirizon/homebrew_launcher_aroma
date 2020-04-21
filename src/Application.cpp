@@ -18,8 +18,8 @@
 #include "common/common.h"
 #include "dynamic_libs/os_functions.h"
 #include "gui/FreeTypeGX.h"
-#include "gui/VPadController.h"
-#include "gui/WPadController.h"
+#include "gui/DVPadController.h"
+#include "gui/DWPadController.h"
 #include "resources/Resources.h"
 #include "sounds/SoundHandler.hpp"
 #include "utils/logger.h"
@@ -34,11 +34,11 @@ Application::Application()
     , mainWindow(NULL)
     , exitCode(EXIT_RELAUNCH_ON_LOAD)
 {
-    controller[0] = new VPadController(GuiTrigger::CHANNEL_1);
-    controller[1] = new WPadController(GuiTrigger::CHANNEL_2);
-    controller[2] = new WPadController(GuiTrigger::CHANNEL_3);
-    controller[3] = new WPadController(GuiTrigger::CHANNEL_4);
-    controller[4] = new WPadController(GuiTrigger::CHANNEL_5);
+    controller[0] = new DVPadController(GuiTrigger::CHANNEL_1);
+    controller[1] = new DWPadController(GuiTrigger::CHANNEL_2);
+    controller[2] = new DWPadController(GuiTrigger::CHANNEL_3);
+    controller[3] = new DWPadController(GuiTrigger::CHANNEL_4);
+    controller[4] = new DWPadController(GuiTrigger::CHANNEL_5);
 
     //! load resources
     Resources::LoadFiles("sd:/wiiu/apps/homebrew_launcher/resources");
@@ -163,6 +163,8 @@ void Application::executeThread(void)
 	    //! Read out inputs
 	    for(int i = 0; i < 5; i++)
         {
+            if(controller[i] == NULL) continue;
+            
             if(controller[i]->update(video->getTvWidth(), video->getTvHeight()) == false)
                 continue;
 
@@ -171,6 +173,12 @@ void Application::executeThread(void)
 
             //! update controller states
             mainWindow->update(controller[i]);
+
+            if (mainWindow->pointerToInvalidate[i])
+            {
+                controller[i]->invalidatePointer();
+                mainWindow->pointerToInvalidate[i] = false;
+            }
         }
 
         //mainWindow->process();

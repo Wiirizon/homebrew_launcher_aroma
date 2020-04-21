@@ -26,7 +26,7 @@ MainWindow::MainWindow(int w, int h)
     : width(w)
     , height(h)
     , bgImageColor(w, h, (GX2Color){ 0, 0, 0, 0 })
-    , bgParticleImg(w, h, 500, 30.0f,30.0f,0.2f,0.8f)
+    , bgParticleImg(w, h, 500, 0.0f,30.0f,0.2f,0.8f)
     , homebrewWindow(w, h)
 {
     bgImageColor.setImageColor((GX2Color){  79, 153, 239, 255 }, 0);
@@ -36,15 +36,17 @@ MainWindow::MainWindow(int w, int h)
     append(&bgImageColor);
     append(&bgParticleImg);
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 1; i < 5; i++)
     {
-        std::string filename = StringTools::strfmt("player%i_point.png", i+1);
+        std::string filename = StringTools::strfmt("player%i_point.png", i);
         pointerImgData[i] = Resources::GetImageData(filename.c_str());
         pointerImg[i] = new GuiImage(pointerImgData[i]);
         pointerImg[i]->setScale(1.5f);
         pointerValid[i] = false;
+        pointerToInvalidate[i] = false;
     }
 
+    homebrewWindow.selected.connect(this, &MainWindow::OnHomebrewButtonSelected);
     append(&homebrewWindow);
 }
 
@@ -64,7 +66,7 @@ MainWindow::~MainWindow()
         delete drcElements[0];
         remove(drcElements[0]);
     }
-    for(int i = 0; i < 4; i++)
+    for(int i = 1; i < 5; i++)
     {
         delete pointerImg[i];
         Resources::RemoveImageData(pointerImgData[i]);
@@ -98,7 +100,7 @@ void MainWindow::updateEffects()
     }
 }
 
-void MainWindow::update(GuiController *controller)
+void MainWindow::update(ControllerBase *controller)
 {
     //! dont read behind the initial elements in case one was added
     //u32 tvSize = tvElements.size();
@@ -137,9 +139,9 @@ void MainWindow::update(GuiController *controller)
 //        }
 //    }
 
-    if(controller->chanIdx >= 1 && controller->chanIdx <= 4 && controller->data.validPointer)
+    if(controller->showPointer)
     {
-        int wpadIdx = controller->chanIdx - 1;
+        int wpadIdx = controller->chanIdx;
         f32 posX = controller->data.x;
         f32 posY = controller->data.y;
         pointerImg[wpadIdx]->setPosition(posX, posY);
@@ -154,8 +156,8 @@ void MainWindow::drawDrc(CVideo *video)
     {
         drcElements[i]->draw(video);
     }
-
-    for(int i = 0; i < 4; i++)
+    
+    for(int i = 1; i < 5; i++)
     {
         if(pointerValid[i])
         {
@@ -173,7 +175,7 @@ void MainWindow::drawTv(CVideo *video)
         tvElements[i]->draw(video);
     }
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 1; i < 5; i++)
     {
         if(pointerValid[i])
         {
@@ -181,4 +183,9 @@ void MainWindow::drawTv(CVideo *video)
             pointerValid[i] = false;
         }
     }
+}
+
+void MainWindow::OnHomebrewButtonSelected(const GuiController* controller)
+{
+    pointerToInvalidate[controller->chanIdx] = true;
 }

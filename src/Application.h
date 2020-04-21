@@ -20,6 +20,7 @@
 #include "menu/MainWindow.h"
 #include <video/CVideo.h>
 #include <system/CThread.h>
+#include "gui/ControllerBase.h"
 
 class Application : public CThread
 {
@@ -67,7 +68,7 @@ private:
     GuiSound *bgMusic;
     CVideo *video;
     MainWindow *mainWindow;
-    GuiController *controller[5];
+    ControllerBase *controller[5];
     int exitCode;
 };
 

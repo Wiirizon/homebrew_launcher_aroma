@@ -19,6 +19,7 @@
 
 #include "gui/Gui.h"
 #include "gui/GuiFrame.h"
+#include "gui/ControllerBase.h"
 
 class HomebrewLaunchWindow : public GuiFrame, public sigslot::has_slots<>
 {
@@ -27,9 +28,16 @@ public:
     virtual ~HomebrewLaunchWindow();
 
     sigslot::signal1<GuiElement *> backButtonClicked;
+    sigslot::signal1<const GuiController*> selected;
 private:
     void OnBackButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
     {
+        // If there is no pointer dont click
+        if (trigger == &wpadTouchTrigger && !((ControllerBase*) controller)->showPointer)
+        {
+            return;
+        }
+
         backButtonClicked(this);
     }
 
@@ -39,11 +47,17 @@ private:
     void OnOpenEffectFinish(GuiElement *element);
     void OnCloseEffectFinish(GuiElement *element);
 
+    void OnDpadClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
+    void OnButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger);
+
+    int findSelectedButton();
+
     GuiSound *buttonClickSound;
     GuiImageData * backgroundImgData;
     GuiImage backgroundImg;
 
     GuiImageData *buttonImgData;
+    GuiImageData *buttonSelectedImgData;
     GuiImage iconImage;
 
     GuiText titleText;
@@ -55,14 +69,22 @@ private:
 
     GuiText loadBtnLabel;
     GuiImage loadImg;
+    GuiImage loadSelectedImg;
     GuiButton loadBtn;
 
     GuiText backBtnLabel;
     GuiImage backImg;
+    GuiImage backSelectedImg;
     GuiButton backBtn;
 
     GuiTrigger touchTrigger;
     GuiTrigger wpadTouchTrigger;
+    GuiTrigger buttonRightTrigger;
+    GuiTrigger buttonLeftTrigger;
+    GuiTrigger buttonATrigger;
+    GuiTrigger buttonBTrigger;
+    GuiButton dpadButtons;
+    GuiButton buttons;
 
     const std::string homebrewLaunchPath;
 };

@@ -22,6 +22,7 @@
 #include "gui/Gui.h"
 #include "HomebrewWindow.h"
 #include "gui/GuiParticleImage.h"
+#include "gui/ControllerBase.h"
 
 class CVideo;
 
@@ -111,11 +112,15 @@ public:
         drcElements.clear();
     }
 
+    bool pointerToInvalidate[5];
+
     void drawDrc(CVideo *video);
     void drawTv(CVideo *video);
-    void update(GuiController *controller);
+    void update(ControllerBase *controller);
     void updateEffects();
 private:
+    void OnHomebrewButtonSelected(const GuiController* controller);
+
     int width, height;
     std::vector<GuiElement *> drcElements;
     std::vector<GuiElement *> tvElements;
@@ -124,9 +129,9 @@ private:
     GuiParticleImage bgParticleImg;
     HomebrewWindow homebrewWindow;
 
-    GuiImageData *pointerImgData[4];
-    GuiImage *pointerImg[4];
-    bool pointerValid[4];
+    GuiImageData *pointerImgData[5];
+    GuiImage *pointerImg[5];
+    bool pointerValid[5];
 };
 
 #endif //_MAIN_WINDOW_H_

@@ -23,6 +23,7 @@
 #include "custom/utils/HomebrewXML.h"
 #include "utils/utils.h"
 #include "HomebrewLaunchWindow.h"
+#include <utils/StringTools.h>
 
 #define DEFAULT_WIILOAD_PORT        4299
 
@@ -34,15 +35,21 @@ HomebrewWindow::HomebrewWindow(int w, int h)
     , homebrewButtonImgData(Resources::GetImageData("homebrewButton.png"))
     , arrowRightImageData(Resources::GetImageData("rightArrow.png"))
     , arrowLeftImageData(Resources::GetImageData("leftArrow.png"))
+    , homebrewButtonSelectedImageData(Resources::GetImageData("homebrewButtonSelected.png"))
     , arrowRightImage(arrowRightImageData)
     , arrowLeftImage(arrowLeftImageData)
     , arrowRightButton(arrowRightImage.getWidth(), arrowRightImage.getHeight())
     , arrowLeftButton(arrowLeftImage.getWidth(), arrowLeftImage.getHeight())
-    , hblVersionText("Homebrew Launcher " HBL_VERSION " by Dimok", 32, glm::vec4(1.0f))
+    , updownButtons(0, 0)
+    , aButton(0, 0)
+    , hblVersionText("Homebrew Launcher by Dimok (Controller Mod v1)", 32, glm::vec4(1.0f))
     , touchTrigger(GuiTrigger::CHANNEL_1, GuiTrigger::VPAD_TOUCH)
     , wpadTouchTrigger(GuiTrigger::CHANNEL_2 | GuiTrigger::CHANNEL_3 | GuiTrigger::CHANNEL_4 | GuiTrigger::CHANNEL_5, GuiTrigger::BUTTON_A)
-    , buttonLTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_L | GuiTrigger::BUTTON_LEFT, true)
-    , buttonRTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_R | GuiTrigger::BUTTON_RIGHT, true)
+    , buttonLTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_L | GuiTrigger::BUTTON_LEFT | GuiTrigger::STICK_L_LEFT, true)
+    , buttonRTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_R | GuiTrigger::BUTTON_RIGHT | GuiTrigger::STICK_L_RIGHT, true)
+    , buttonUpTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_UP | GuiTrigger::STICK_L_UP, true)
+    , buttonDownTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_DOWN | GuiTrigger::STICK_L_DOWN, true)
+    , buttonATrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_A, true)
     , tcpReceiver(DEFAULT_WIILOAD_PORT)
 {
     tcpReceiver.serverReceiveStart.connect(this, &HomebrewWindow::OnTcpReceiveStart);
@@ -120,6 +127,8 @@ HomebrewWindow::HomebrewWindow(int w, int h)
 
         homebrewButtons[idx].button = new GuiButton(homebrewButtonImgData->getWidth(), homebrewButtonImgData->getHeight());
 
+        homebrewButtons[idx].selectImg = new GuiImage(homebrewButtonSelectedImageData);
+
         homebrewButtons[idx].button->setImage(homebrewButtons[idx].image);
         homebrewButtons[idx].button->setLabel(homebrewButtons[idx].nameLabel, 0);
         homebrewButtons[idx].button->setLabel(homebrewButtons[idx].descriptionLabel, 1);
@@ -131,11 +140,13 @@ HomebrewWindow::HomebrewWindow(int w, int h)
         homebrewButtons[idx].button->setTrigger(&wpadTouchTrigger);
         homebrewButtons[idx].button->setEffectGrow();
         homebrewButtons[idx].button->setSoundClick(buttonClickSound);
+        homebrewButtons[idx].button->setSelectable(true);
+        homebrewButtons[idx].button->setdrawOverOnlyWhenSelected(true);
+        homebrewButtons[idx].button->setImageOver(homebrewButtons[idx].selectImg);
         homebrewButtons[idx].button->clicked.connect(this, &HomebrewWindow::OnHomebrewButtonClick);
 
         append(homebrewButtons[idx].button);
     }
-
 
     if((MAX_BUTTONS_ON_PAGE) < homebrewButtons.size())
     {
@@ -164,6 +175,17 @@ HomebrewWindow::HomebrewWindow(int w, int h)
     hblVersionText.setAlignment(ALIGN_BOTTOM | ALIGN_RIGHT);
     hblVersionText.setPosition(-30, 30);
     append(&hblVersionText);
+
+    updownButtons.setTrigger(&buttonUpTrigger);
+    updownButtons.setTrigger(&buttonDownTrigger);
+    updownButtons.clicked.connect(this, &HomebrewWindow::OnUpDownClick);
+    append(&updownButtons);
+
+    aButton.setTrigger(&buttonATrigger);
+    aButton.clicked.connect(this, &HomebrewWindow::OnAClick);
+    append(&aButton);
+
+    inputDisabled = false;
 }
 
 HomebrewWindow::~HomebrewWindow()
@@ -176,12 +198,14 @@ HomebrewWindow::~HomebrewWindow()
         delete homebrewButtons[i].button;
         delete homebrewButtons[i].iconImgData;
         delete homebrewButtons[i].iconImg;
+        delete homebrewButtons[i].selectImg;
     }
 
     Resources::RemoveSound(buttonClickSound);
     Resources::RemoveImageData(homebrewButtonImgData);
     Resources::RemoveImageData(arrowRightImageData);
     Resources::RemoveImageData(arrowLeftImageData);
+    Resources::RemoveImageData(homebrewButtonSelectedImageData);
 }
 
 void HomebrewWindow::OnOpenEffectFinish(GuiElement *element)
@@ -201,6 +225,8 @@ void HomebrewWindow::OnCloseEffectFinish(GuiElement *element)
     {
         homebrewButtons[i].button->clearState(GuiElement::STATE_DISABLED);
     }
+
+    inputDisabled = false;
 }
 
 void HomebrewWindow::OnLaunchBoxCloseClick(GuiElement *element)
@@ -214,6 +240,12 @@ void HomebrewWindow::OnHomebrewButtonClick(GuiButton *button, const GuiControlle
 {
     bool disableButtons = false;
 
+    // If there is no pointer dont click
+    if (trigger == &wpadTouchTrigger && !((ControllerBase*) controller)->showPointer)
+    {
+        return;
+    }
+
     for(u32 i = 0; i < homebrewButtons.size(); i++)
     {
         if(button == homebrewButtons[i].button)
@@ -224,8 +256,10 @@ void HomebrewWindow::OnHomebrewButtonClick(GuiButton *button, const GuiControlle
             launchBox->setPosition(0.0f, 30.0f);
             launchBox->effectFinished.connect(this, &HomebrewWindow::OnOpenEffectFinish);
             launchBox->backButtonClicked.connect(this, &HomebrewWindow::OnLaunchBoxCloseClick);
+            launchBox->selected.connect(this, &HomebrewWindow::LaunchBoxSelected);
             append(launchBox);
             disableButtons = true;
+            inputDisabled = true;
             break;
         }
     }
@@ -242,6 +276,9 @@ void HomebrewWindow::OnHomebrewButtonClick(GuiButton *button, const GuiControlle
 
 void HomebrewWindow::OnLeftArrowClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
 {
+    if (inputDisabled)
+        return;
+
     if(listOffset > 0)
     {
         listOffset--;
@@ -255,6 +292,9 @@ void HomebrewWindow::OnLeftArrowClick(GuiButton *button, const GuiController *co
 
 void HomebrewWindow::OnRightArrowClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
 {
+    if (inputDisabled)
+        return;
+
     if((listOffset * MAX_BUTTONS_ON_PAGE) < (int)homebrewButtons.size())
     {
         listOffset++;
@@ -265,6 +305,84 @@ void HomebrewWindow::OnRightArrowClick(GuiButton *button, const GuiController *c
 
         append(&arrowLeftButton);
     }
+}
+
+int HomebrewWindow::searchSelectedButton()
+{
+    int min = listOffset * MAX_BUTTONS_ON_PAGE;
+
+    int max = min + MAX_BUTTONS_ON_PAGE;
+    if (max > (int) homebrewButtons.size())
+        max = homebrewButtons.size();
+
+    int index = -1;
+    for (int i = min; i < max && index < 0; i++)
+    {
+        if(homebrewButtons[i].button->isStateSet(STATE_SELECTED))
+            index = i;
+    }
+
+	return index;
+}
+
+void HomebrewWindow::OnUpDownClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
+{
+    if (inputDisabled)
+        return;
+
+    int index = searchSelectedButton();
+
+    int min = listOffset * MAX_BUTTONS_ON_PAGE;
+
+    int max = min + MAX_BUTTONS_ON_PAGE;
+    if (max > (int) homebrewButtons.size())
+        max = homebrewButtons.size();
+
+    if (min >= max)
+        return;
+
+    if(index < 0 && trigger == &buttonUpTrigger)
+    {
+        homebrewButtons[min].button->setState(STATE_SELECTED);
+        selected(controller);
+        return;
+    }
+    
+    if(trigger == &buttonUpTrigger && index > min)
+    {
+        homebrewButtons[index].button->clearState(STATE_SELECTED);
+        index--;
+        homebrewButtons[index].button->setState(STATE_SELECTED);
+        selected(controller);
+    }
+    else if(trigger == &buttonDownTrigger && index < max - 1)
+    {
+        if(index >= 0)
+        {
+            homebrewButtons[index].button->clearState(STATE_SELECTED);
+            index++;
+        }
+        else
+            index = min;
+        homebrewButtons[index].button->setState(STATE_SELECTED);
+        selected(controller);
+    }
+}
+
+void HomebrewWindow::OnAClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
+{
+    if (inputDisabled)
+        return;
+
+    // If the controller has a pointer on screen
+    if(((ControllerBase*) controller)->showPointer)
+        return;
+
+    int index = searchSelectedButton();
+    if (index < 0)
+        return;
+
+    homebrewButtons[index].button->clicked(homebrewButtons[index].button, controller, trigger);
 }
 
 void HomebrewWindow::draw(CVideo *pVideo)
@@ -293,6 +411,8 @@ void HomebrewWindow::draw(CVideo *pVideo)
     if(bUpdatePositions)
     {
         bUpdatePositions = false;
+
+        clearSelections();
 
         for(u32 i = 0; i < homebrewButtons.size(); i++)
         {

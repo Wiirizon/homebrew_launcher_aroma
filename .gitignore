@@ -12,3 +12,7 @@
 /udp_debug_reader/obj
 /udp_debug_reader/GeckoLog.txt
 /installer/sd_loader.h
+.vscode
+src/resources/filelist.cpp
+sd_loader/sd_loader.bin
+sd_loader/sd_loader.h
