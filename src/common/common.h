@@ -8,7 +8,7 @@ extern "C" {
 #include <dynamic_libs/os_defs.h>
 #include <dynamic_libs/os_types.h>
 
-#define HBL_VERSION                 "v1.4"
+#define HBL_VERSION                 "v1.5"
 
 #define CAFE_OS_SD_PATH             "/vol/external01"
 #define SD_PATH                     "sd:"
