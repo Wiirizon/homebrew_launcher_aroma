@@ -46,6 +46,18 @@ All remaining is to enter the main application path and enter "make". You should
 
 To compile the installer application enter the "installer" path on the source code and type "make".
 
+### Building using the Docker
+
+It's possible to use a docker image for building. This way you don't need anything installed on your host system.
+
+```
+# make 
+docker run -it --rm -v ${PWD}:/project wiiulegacy/hbl_builder:0.1 make
+
+# make clean
+docker run -it --rm -v ${PWD}:/project wiiulegacy/hbl_builder:0.1 make clean
+```
+
 #### Building an application / homebrew (ELF) for the Homebrew Launcher 
 For an example on how to build an application for the HBL check out the [Hello World example](https://github.com/dimok789/hello_world) application or the port of the libwiiu application [Pong](https://github.com/dimok789/pong_port) for HBL.
 
