@@ -74,6 +74,7 @@ private:
     GuiButton updownButtons;
     GuiButton aButton;
     GuiText hblVersionText;
+    GuiText miiMakerHintText;
 
     typedef struct
     {
@@ -102,6 +103,7 @@ private:
     TcpReceiver tcpReceiver;
 
     bool inputDisabled;
+    FreeTypeGX * osFontSystem;
 };
 
 #endif //_HOMEBREW_WINDOW_H_

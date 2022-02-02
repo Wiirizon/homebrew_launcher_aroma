@@ -43,6 +43,7 @@ HomebrewWindow::HomebrewWindow(int w, int h)
     , updownButtons(0, 0)
     , aButton(0, 0)
     , hblVersionText("Homebrew Launcher " HBL_VERSION " by Dimok", 32, glm::vec4(1.0f))
+    , miiMakerHintText("Press \ue046 to open Mii Maker", 26, glm::vec4(1.0f))
     , touchTrigger(GuiTrigger::CHANNEL_1, GuiTrigger::VPAD_TOUCH)
     , wpadTouchTrigger(GuiTrigger::CHANNEL_2 | GuiTrigger::CHANNEL_3 | GuiTrigger::CHANNEL_4 | GuiTrigger::CHANNEL_5, GuiTrigger::BUTTON_A)
     , buttonLTrigger(GuiTrigger::CHANNEL_ALL, GuiTrigger::BUTTON_L | GuiTrigger::BUTTON_LEFT | GuiTrigger::STICK_L_LEFT, true)
@@ -172,6 +173,17 @@ HomebrewWindow::HomebrewWindow(int w, int h)
         append(&arrowRightButton);
     }
 
+    void *font = NULL;
+    uint32_t size = 0;
+    OSGetSharedData(2, 0, (uint8_t*) &font, &size);
+
+    osFontSystem = new FreeTypeGX((uint8_t*) font, size, true);
+
+    miiMakerHintText.setFont(osFontSystem);
+    miiMakerHintText.setAlignment(ALIGN_BOTTOM | ALIGN_LEFT);
+    miiMakerHintText.setPosition(27, 36);
+    append(&miiMakerHintText);
+
     hblVersionText.setAlignment(ALIGN_BOTTOM | ALIGN_RIGHT);
     hblVersionText.setPosition(-30, 30);
     append(&hblVersionText);
@@ -206,6 +218,7 @@ HomebrewWindow::~HomebrewWindow()
     Resources::RemoveImageData(arrowRightImageData);
     Resources::RemoveImageData(arrowLeftImageData);
     Resources::RemoveImageData(homebrewButtonSelectedImageData);
+    delete osFontSystem;
 }
 
 void HomebrewWindow::OnOpenEffectFinish(GuiElement *element)
