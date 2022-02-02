@@ -143,18 +143,13 @@ public:
 
         KPADRead(chanIdx-1, &kpadData, 1);
 
-        if(kpadData.device_type <= 1)
-        {
-            data.buttons_r = remapWiiMoteButtons(kpadData.btns_r);
-            data.buttons_h = remapWiiMoteButtons(kpadData.btns_h);
-            data.buttons_d = remapWiiMoteButtons(kpadData.btns_d);
-        }
-        else
-        {
-            data.buttons_r = remapClassicButtons(kpadData.classic.btns_r);
-            data.buttons_h = remapClassicButtons(kpadData.classic.btns_h);
-            data.buttons_d = remapClassicButtons(kpadData.classic.btns_d);
-        }
+        data.buttons_r = remapWiiMoteButtons(kpadData.btns_r);
+        data.buttons_h = remapWiiMoteButtons(kpadData.btns_h);
+        data.buttons_d = remapWiiMoteButtons(kpadData.btns_d);
+
+        data.buttons_r |= remapClassicButtons(kpadData.classic.btns_r);
+        data.buttons_h |= remapClassicButtons(kpadData.classic.btns_h);
+        data.buttons_d |= remapClassicButtons(kpadData.classic.btns_d);
 
         data.validPointer = (kpadData.pos_valid == 1 || kpadData.pos_valid == 2) && (kpadData.pos_x >= -1.0f && kpadData.pos_x <= 1.0f) && (kpadData.pos_y >= -1.0f && kpadData.pos_y <= 1.0f);
         //! calculate the screen offsets if pointer is valid else leave old value

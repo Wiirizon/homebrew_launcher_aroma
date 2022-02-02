@@ -6,6 +6,7 @@
  * presses in this mode, as it may interfere with the user who is navigating the pointer.
  *
  * Created by CreeperMario in July 2017 modified by GaryOderNichts in April 2020.
+ * Modified by V10lator 2022
  */
 
 #ifndef DWPAD_CONTROLLER_H_
@@ -140,41 +141,39 @@ public:
         
         KPADRead(chanIdx-1, &kpadData, 1);
         
-        if(kpadData.device_type <= 1)
-        {        
-            data.validPointer = (kpadData.pos_valid == 1 || kpadData.pos_valid == 2) && (kpadData.pos_x >= -1.0f && kpadData.pos_x <= 1.0f) && (kpadData.pos_y >= -1.0f && kpadData.pos_y <= 1.0f);
-            if(data.validPointer)
-            {
-                data.x = (width >> 1) * kpadData.pos_x;
-                data.y = (height >> 1) * (-kpadData.pos_y);
+        data.validPointer = (kpadData.pos_valid == 1 || kpadData.pos_valid == 2) && (kpadData.pos_x >= -1.0f && kpadData.pos_x <= 1.0f) && (kpadData.pos_y >= -1.0f && kpadData.pos_y <= 1.0f);
+        if(data.validPointer)
+        {
+            data.x = (width >> 1) * kpadData.pos_x;
+            data.y = (height >> 1) * (-kpadData.pos_y);
 
-                if(kpadData.angle_y > 0.0f)
-                    data.pointerAngle = (-kpadData.angle_x + 1.0f) * 0.5f * 180.0f;
-                else
-                    data.pointerAngle = (kpadData.angle_x + 1.0f) * 0.5f * 180.0f - 180.0f;
-            }
+            if(kpadData.angle_y > 0.0f)
+                data.pointerAngle = (-kpadData.angle_x + 1.0f) * 0.5f * 180.0f;
             else
-            {
-                data.validPointer = true;
-
-                data.x += kpadData.nunchuck.stick_x * 20;
-                data.y += kpadData.nunchuck.stick_y * 20;
-            }
-            
-            data.buttons_r = remapWiiMoteButtons(kpadData.btns_r);
-            data.buttons_h = remapWiiMoteButtons(kpadData.btns_h);
-            data.buttons_d = remapWiiMoteButtons(kpadData.btns_d);
+                data.pointerAngle = (kpadData.angle_x + 1.0f) * 0.5f * 180.0f - 180.0f;
         }
         else
+        {
+            data.validPointer = true;
+
+            data.x += kpadData.nunchuck.stick_x * 20;
+            data.y += kpadData.nunchuck.stick_y * 20;
+        }
+
+        data.buttons_r = remapWiiMoteButtons(kpadData.btns_r);
+        data.buttons_h = remapWiiMoteButtons(kpadData.btns_h);
+        data.buttons_d = remapWiiMoteButtons(kpadData.btns_d);
+
+        if(kpadData.device_type > 1)
         {
             data.validPointer = true;
 
             data.x += kpadData.classic.lstick_x * 20;
             data.y += kpadData.classic.lstick_y * 20;
 
-            data.buttons_r = remapClassicButtons(kpadData.classic.btns_r);
-            data.buttons_h = remapClassicButtons(kpadData.classic.btns_h);
-            data.buttons_d = remapClassicButtons(kpadData.classic.btns_d);
+            data.buttons_r |= remapClassicButtons(kpadData.classic.btns_r);
+            data.buttons_h |= remapClassicButtons(kpadData.classic.btns_h);
+            data.buttons_d |= remapClassicButtons(kpadData.classic.btns_d);
         }
 
         if (data.x < -(width / 2)) data.x = -(width / 2);
