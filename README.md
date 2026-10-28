@@ -1,5 +1,16 @@
 # WiiU Homebrew Launcher
 
+## Experimental Aroma port
+
+This fork adds a separate native RPX/WUHB launcher in [`aroma/`](aroma/README.md).
+It browses Aroma-compatible apps using a text menu and launches them through
+Aroma's RPXLoadingModule. It does **not** make legacy ELF applications compatible.
+Builds are available through the Aroma CI workflow; console testing is still
+required. See the Aroma README for installation, controls, limitations, and build
+instructions using public homebrew tools only.
+
+The remainder of this README describes the original legacy launcher.
+
 The Homebrew Launcher is a WiiU homebrew that lists homebrew applications located on a SD card and permits launching them (similar to the Homebrew Channel of the Wii).
 
 #### Usage
