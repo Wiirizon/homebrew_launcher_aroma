@@ -1,0 +1,4 @@
+# This build needs only the Dockerfile. Source is mounted at runtime.
+**
+!aroma/
+!aroma/Dockerfile
