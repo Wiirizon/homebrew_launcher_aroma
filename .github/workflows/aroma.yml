@@ -1,0 +1,41 @@
+name: Aroma build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catalog-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test app discovery with sanitizers
+        run: |
+          mkdir -p aroma/build
+          cd aroma/build
+          g++ -std=c++17 -Wall -Wextra -Werror -g -fsanitize=address,undefined ../tests/catalog_tests.cpp ../source/catalog.cpp -o catalog_tests
+          ./catalog_tests
+
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build with public devkitPro and Aroma tooling
+        run: |
+          docker build -f aroma/Dockerfile -t hbl-aroma-builder .
+          docker run --rm -v "$PWD:/project" hbl-aroma-builder
+      - name: Verify RPX and WUHB packaging
+        run: node aroma/tests/verify-build.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: aroma-launcher
+          if-no-files-found: error
+          path: |
+            aroma/homebrew_launcher_aroma.wuhb
+            aroma/homebrew_launcher_aroma.rpx
+            aroma/README.md
+            LICENSE
