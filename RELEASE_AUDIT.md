@@ -37,8 +37,8 @@ This is an engineering review, not a guarantee of legal compliance or safety.
 ## Unresolved limits
 
 Existing public Git history includes original upstream author metadata and the
-configured Git identity used by earlier project commits. No public history has
-been rewritten by this audit. Hosting-provider account/PR metadata and cached
+configured Git identity formerly used by project commits. Project-authored
+history has been replaced with generic author metadata. Hosting-provider account/PR metadata and cached
 commits cannot be erased by editing files or publishing a corrected release.
 Required upstream attribution must remain intact. New audit commits use a
 generic project author with no email or account mapping.
@@ -46,3 +46,4 @@ generic project author with no email or account mapping.
 The initial successful console report does not establish coverage of every
 firmware, controller, HOME/resume scenario, or target application. The hardware
 checklist in aroma/README.md remains applicable.
+
