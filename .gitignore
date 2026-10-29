@@ -15,3 +15,21 @@
 .vscode
 sd_loader/sd_loader.bin
 sd_loader/sd_loader.h
+
+# Native Aroma outputs and local dependencies. Never stage the parent workspace.
+/aroma/build/
+/aroma/.deps/
+/aroma/*.elf
+/aroma/*.rpx
+/aroma/*.wuhb
+/aroma/*.lst
+/aroma/tests/catalog_tests.exe
+# Proprietary tools, credentials, and local settings must never be published.
+Cafe_SDK*/
+*.rpl
+*.key
+*.pem
+.env
+.env.*
+.aws/
+.codex/
