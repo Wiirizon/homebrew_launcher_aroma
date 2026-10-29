@@ -2,6 +2,7 @@
 // Independently check the generated RPX header and WUHB /code/root.rpx entry.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { inflateSync } from 'node:zlib';
 const base = new URL('../', import.meta.url);
 const rpx = readFileSync(new URL('homebrew_launcher_aroma.rpx', base));
 const bundle = readFileSync(new URL('homebrew_launcher_aroma.wuhb', base));
@@ -48,8 +49,33 @@ for (let offset = 0; offset < fileSize;) {
     offset += Math.ceil((32 + length) / 4) * 4;
 }
 assert(found, 'Bundled /code/root.rpx must match the built RPX');
-for (const binary of [rpx, bundle]) {
-    const strings = binary.toString('latin1');
+// RPX strings may be hidden inside compressed sections. Inspect those too.
+const binaries = [rpx, bundle];
+const sectionTable = rpx.readUInt32BE(32);
+const sectionStride = rpx.readUInt16BE(46), sectionCount = rpx.readUInt16BE(48);
+assert(sectionStride >= 40);
+assert(sectionTable + sectionStride * sectionCount <= rpx.length);
+for (let i = 0; i < sectionCount; ++i) {
+    const pos = sectionTable + i * sectionStride;
+    const type = rpx.readUInt32BE(pos + 4), flags = rpx.readUInt32BE(pos + 8);
+    const offset = rpx.readUInt32BE(pos + 16), size = rpx.readUInt32BE(pos + 20);
+    if (type === 8 || size === 0) continue; // NOBITS sections have no file data.
+    assert(offset + size <= rpx.length);
+    let section = rpx.subarray(offset, offset + size);
+    if (flags & 0x08000000) {
+        const length = section.readUInt32BE(0);
+        section = inflateSync(section.subarray(4), { maxOutputLength: 64 * 1024 * 1024 });
+        assert.equal(section.length, length);
+    }
+    binaries.push(section);
+}
+for (const binary of binaries) {
+    // Some public devkitPro newlib archives contain their maintainer's build
+    // path in assertion messages. These two known library source paths are
+    // toolchain provenance, not files from the user's build workspace.
+    const strings = binary.toString('latin1').replace(
+        /\/home\/[^/\x00]+\/projects\/devkitpro\/pacman-packages\/devkitppc\/newlib\/src\/newlib-[^/\x00]+\/newlib\/libc\/stdlib\/(?:dtoa|mprec)\.c/g,
+        '<public devkitPro newlib source>');
     assert(!/[A-Za-z]:[\\/]Users[\\/]|\/home\/|Cafe_SDK/i.test(strings), 'No local paths or proprietary SDK references');
 }
 console.log('RPX header and WUHB embedded executable verified');

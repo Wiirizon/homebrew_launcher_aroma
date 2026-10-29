@@ -1,18 +1,26 @@
-# Homebrew Launcher for Aroma — experimental
+# Simple Aroma Launcher — experimental
 
-This is an initial native Wii U application that preserves HBL's central job:
-browse homebrew on the SD card and launch a selected application. It builds as
+**This is NOT a direct port of Homebrew Launcher.** It is a separate, simplified
+text-based application for browsing and launching Aroma-compatible apps.
+It does not preserve the original interface or all original functionality,
+and **cannot launch legacy ELF apps**. The original HBL source inherited from
+dimok789 and contributors remains in this repository, but the native app in
+this directory is a separate implementation. It builds as
 RPX/WUHB with devkitPPC and WUT, and uses Aroma's public
 [librpxloader](https://github.com/wiiu-env/librpxloader) API. The historical ELF
 source and root Makefile remain available separately.
 
-**Status: builds successfully; not yet tested on a Wii U.** Do not describe this
-as a hardware-verified release. See the console checklist below.
+**Status: experimental; user-reported successful operation on a Wii U on
+October 29, 2026.** The exact firmware, Aroma version, controllers, and tested
+scenarios were not supplied. The full console checklist below remains unverified.
 
 ## Installation and controls
 
-1. Build the project or download the `aroma-launcher` artifact from this fork's
-   GitHub Actions. Unzip the artifact if needed.
+1. Download the experimental ZIP or WUHB from this fork's
+   [Releases](https://github.com/Wiirizon/homebrew_launcher_aroma/releases),
+   build the project, or use the `aroma-launcher` GitHub Actions artifact.
+   The release ZIP contains `wiiu/apps/homebrew_launcher_aroma.wuhb`; extract
+   it to the SD root. Keep its README, license, and source link for reference.
 2. Copy **only** `homebrew_launcher_aroma.wuhb` to
    `SD:/wiiu/apps/homebrew_launcher_aroma.wuhb`.
 3. Launch it from the Wii U Menu while running Aroma. Use an up-to-date, complete
@@ -104,7 +112,8 @@ refuse to run if it already exists. These tests do not exercise Cafe OS APIs.
 After building, run `node aroma/tests/verify-build.mjs` from the repository root
 to check the RPX header and confirm that WUHB embeds exactly the built RPX.
 
-Before calling this a tested release, check on an actual Wii U:
+The following detailed checks remain outstanding despite the initial successful
+user report. Check on an actual Wii U before claiming broad compatibility:
 
 - Cold launch from the Aroma Wii U Menu; verify TV and GamePad output.
 - Navigate multiple pages with each supported controller, including disconnects.

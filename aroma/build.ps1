@@ -23,7 +23,10 @@ $actual = & $git -C $dependency rev-parse HEAD
 if ($LASTEXITCODE -ne 0 -or $actual -ne $revision) {
     throw "Expected librpxloader revision $revision; inspect $dependency before rebuilding."
 }
-& $make -C $dependency -j2
+# Rebuild with sanitized __FILE__ strings, including existing dependency objects.
+& $make -C $dependency clean
+if ($LASTEXITCODE -ne 0) { throw 'librpxloader clean failed' }
+& $make -C $dependency "CPPFLAGS=-ffile-prefix-map=$($dependency.Replace('\', '/'))=librpxloader" -j2
 if ($LASTEXITCODE -ne 0) { throw 'librpxloader build failed' }
 & $make -C $PSScriptRoot "RPXLOADER=$($dependency.Replace('\', '/'))" -j2
 if ($LASTEXITCODE -ne 0) { throw 'Aroma build failed' }
