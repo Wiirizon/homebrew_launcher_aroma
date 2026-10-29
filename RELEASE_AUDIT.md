@@ -37,11 +37,13 @@ This is an engineering review, not a guarantee of legal compliance or safety.
 ## Unresolved limits
 
 Existing public Git history includes original upstream author metadata and the
-configured Git identity used by earlier project commits. No public history has
-been rewritten by this audit. Hosting-provider account/PR metadata and cached
-commits cannot be erased by editing files or publishing a corrected release.
-Required upstream attribution must remain intact. New audit commits use a
-generic project author with no email or account mapping.
+configured Git identity used by earlier project commits. This audit does not
+anonymize project history or replace contributor identities with generic
+metadata. Hosting-provider account/PR metadata and cached commits cannot be
+erased by editing files or publishing a corrected release. Required upstream
+attribution and project contributor credit must remain intact. New commits
+must use the actual contributor identity and explicitly record any AI
+co-author.
 
 The initial successful console report does not establish coverage of every
 firmware, controller, HOME/resume scenario, or target application. The hardware
