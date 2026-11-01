@@ -32,3 +32,8 @@ Cafe_SDK*/
 .env.*
 .aws/
 .codex/
+
+# Legacy browser-exploit payloads are retained only in authorized local
+# workspaces and are not redistributable project source.
+/www/homebrew_launcher/code*.bin
+/www/homebrew_launcher/wiiuhaxx_loader.bin

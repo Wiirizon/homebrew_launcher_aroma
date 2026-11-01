@@ -25,6 +25,16 @@ names or contact details required by those licenses. They are not user data.
 No upstream branding implies endorsement. Build tools are not distributed in
 the native installation ZIP. Their licenses continue to apply to those tools.
 
+## Legacy browser payloads
+
+The legacy `www/homebrew_launcher/code*.bin` and
+`www/homebrew_launcher/wiiuhaxx_loader.bin` files are compiled browser-exploit
+payloads inherited from the historical web launcher. Their complete source,
+build provenance and redistribution permissions are not established in this
+repository. They are intentionally excluded from tracked source and release
+archives; authorized local test copies may remain untracked. The native Aroma
+launcher does not depend on these payloads.
+
 The source ZIP contains no Git history or machine-local build products. With a
 public devkitPro/WUT toolchain and Node.js installed, build the bundled library
 with `make -C third_party/librpxloader CPPFLAGS="-ffile-prefix-map=$(pwd)=source"`, then run
