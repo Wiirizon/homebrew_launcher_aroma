@@ -15,7 +15,6 @@
 .vscode
 sd_loader/sd_loader.bin
 sd_loader/sd_loader.h
-
 # Native Aroma outputs and local dependencies. Never stage the parent workspace.
 /aroma/build/
 /aroma/.deps/
