@@ -1,4 +1,4 @@
-# Simple Aroma Launcher (experimental)
+# Simple Aroma Launcher (experimental)`r`n`r`n[![Open issues](https://img.shields.io/github/issues/Wiirizon/homebrew_launcher_aroma)](https://github.com/Wiirizon/homebrew_launcher_aroma/issues)
 
 **This is NOT a direct port of the original Homebrew Launcher.** It is a
 separate, simplified text-based launcher for Aroma-compatible RPX/WUHB apps.
