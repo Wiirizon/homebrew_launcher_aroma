@@ -1,7 +1,5 @@
 # Simple Aroma Launcher (experimental)
 
-[![Open issues](https://img.shields.io/github/issues/Wiirizon/homebrew_launcher_aroma)](https://github.com/Wiirizon/homebrew_launcher_aroma/issues)
-
 **This is NOT a direct port of the original Homebrew Launcher.** It is a
 separate, simplified text-based launcher for Aroma-compatible RPX/WUHB apps.
 It does **not** support legacy ELF applications or preserve all original HBL
