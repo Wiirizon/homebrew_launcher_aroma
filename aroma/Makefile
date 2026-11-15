@@ -9,8 +9,6 @@ BUILD := build
 APP_NAME := Simple Aroma Launcher (experimental)
 APP_SHORTNAME := Simple Aroma Launcher
 APP_AUTHOR := Community contributors
-# Relative path: wut_rules reads APP_ICON at include time and paths may contain spaces.
-APP_ICON := assets/icon.png
 NODE ?= node
 include $(DEVKITPRO)/wut/share/wut_rules
 CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -Werror -ffunction-sections -fdata-sections $(MACHDEP) \
