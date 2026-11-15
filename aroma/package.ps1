@@ -29,7 +29,7 @@ try {
     $sourceNote = "Simple Aroma Launcher $Version`nNot a direct HBL port; no ELF support.`nSource revision: $revision`nRebuild/relink instructions: THIRD_PARTY_NOTICES.md`nCorresponding source is in the sibling simple-aroma-launcher-$Version-source.zip release asset.`n"
     Set-Content -LiteralPath (Join-Path $binary 'SOURCE.txt') -Value $sourceNote -Encoding utf8
     $projectArchive = Join-Path $destination 'project-source.zip'
-    & $git archive --format=zip "--output=$projectArchive" HEAD LICENSE THIRD_PARTY_NOTICES.md UNOFFICIAL.md RELEASE_AUDIT.md licenses aroma/Makefile aroma/Dockerfile aroma/README.md aroma/build.ps1 aroma/package.ps1 aroma/assets aroma/source aroma/scripts aroma/tests
+    & $git archive --format=zip "--output=$projectArchive" HEAD LICENSE THIRD_PARTY_NOTICES.md UNOFFICIAL.md RELEASE_AUDIT.md licenses aroma/Makefile aroma/Dockerfile aroma/README.md aroma/build.ps1 aroma/package.ps1 aroma/source aroma/scripts aroma/tests
     if ($LASTEXITCODE -ne 0) { throw 'Project source archive failed' }
     Expand-Archive -LiteralPath $projectArchive -DestinationPath $source
     $dependencyArchive = Join-Path $destination 'loader-source.zip'
